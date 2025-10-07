@@ -34,8 +34,11 @@ public class UnCliente implements Runnable{
                     }
                 }else{
                     for (UnCliente cliente : Servidorsote.clientes.values()) {
+                        if (cliente.idCliente != idCliente) {
                         cliente.salida.writeUTF("Mensjae directo de " + idCliente + ": " + mensaje);
+                        }
                     }
+                    
                 }
             } catch (Exception ex) {
             }                               
