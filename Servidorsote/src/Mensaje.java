@@ -1,6 +1,9 @@
 public class Mensaje {
     String mensaje;
     Tipo tipo;
+    String uniDestino;
+    String[] destinos = {};
+    
     public enum Tipo{
         uni,
         multi,
@@ -8,13 +11,27 @@ public class Mensaje {
     }
     
     public Mensaje(Tipo tipo, String mensaje) {
-        obtenerDestinos(tipo, mensaje);
+        
         //this.mensaje = mensaje;
     }
-    
-    public static String obtenerDestinos(Tipo tipo, String mensaje){
-        
-        
-        return "";
+
+    public String getMensaje() {
+        return mensaje;
     }
+
+    public Tipo getTipo() {
+        return tipo;
+    }
+
+    public String getUniDestino() {
+        return uniDestino;
+    }
+
+    public String[] getDestinos() {
+        if (Tipo.multi == this.tipo) {
+            
+        }
+        return destinos;
+    }
+    
 }
