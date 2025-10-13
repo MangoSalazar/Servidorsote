@@ -39,6 +39,29 @@ public class UnCliente implements Runnable {
                     }
                 }
 
+                // Procesar mensajes
+                if (mensaje.startsWith("@")) {
+                    String[] partes = mensaje.split(" ", 2);
+                    if (partes.length > 1) {
+                        String aQuien = partes[0].substring(1);
+                        UnCliente cliente = Servidorsote.clientes.get(aQuien);
+                        if (cliente != null) {
+                            cliente.salida.writeUTF("Directo de " + idCliente + ": " + partes[1]);
+                        } else {
+                            salida.writeUTF("No existe el cliente con id " + aQuien);
+                        }
+                    } else {
+                        salida.writeUTF("Formato incorrecto. Usa: @id mensaje");
+                    }
+                } else {
+                    for (UnCliente cliente : Servidorsote.clientes.values()) {
+                        if (!cliente.idCliente.equals(idCliente)) {
+                            cliente.salida.writeUTF("mensaje de " + idCliente + ": " + mensaje);
+                        }
+                    }
+                }
+
+                if (!autenticado) mensajesEnviados++;
 
             }
 
