@@ -1,8 +1,8 @@
-public class Sesiones {
+public class Sesion {
     String nombre;
     String contraseña;
 
-    public Sesiones(String nombre, String contraseña) {
+    public Sesion(String nombre, String contraseña) {
         if (numCaracteres(nombre , contraseña )) {
             this.nombre = nombre;
             this.contraseña = contraseña;

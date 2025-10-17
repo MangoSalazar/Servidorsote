@@ -1,9 +1,11 @@
+
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
 import java.net.Socket;
 
 public class UnCliente implements Runnable {
+
     private final Socket socket;
     private final DataOutputStream salida;
     private final DataInputStream entrada;
@@ -21,24 +23,17 @@ public class UnCliente implements Runnable {
     @Override
     public void run() {
         try {
-            salida.writeUTF("Bienvenido cliente " + idCliente +
-                    ". Puedes enviar 3 mensajes antes de registrarte.\n" +
-                    "Para registrarte o iniciar sesión usa: register nombre o login nombre.");
+            salida.writeUTF("Bienvenido cliente " + idCliente
+                    + ". Puedes enviar 3 mensajes antes de registrarte.\n"
+                    + "Para registrarte o iniciar sesión usa: register nombre o login nombre.");
 
             while (true) {
                 String mensaje = entrada.readUTF();
 
-                // Si aún no está autenticado y ya pasó el límite
                 if (!autenticado && mensajesEnviados >= 3) {
-                    if (mensaje.startsWith("login ") || mensaje.startsWith("register ")) {
-                        autenticado = true;
-                        salida.writeUTF("Ahora estás autenticado y puedes enviar mensajes ilimitados.");
-                    } else {
-                        salida.writeUTF("Límite de mensajes alcanzado. Usa 'login nombre' o 'register nombre'.");
-                        continue;
-                    }
+                    iniciarSesion(mensaje);
                 }
-
+                
                 // Procesar mensajes
                 if (mensaje.startsWith("@")) {
                     String[] partes = mensaje.split(" ", 2);
@@ -61,7 +56,9 @@ public class UnCliente implements Runnable {
                     }
                 }
 
-                if (!autenticado) mensajesEnviados++;
+                if (!autenticado) {
+                    mensajesEnviados++;
+                }
 
             }
 
@@ -71,7 +68,25 @@ public class UnCliente implements Runnable {
             try {
                 Servidorsote.clientes.remove(idCliente);
                 socket.close();
-            } catch (IOException ignored) {}
+            } catch (IOException ignored) {
+            }
         }
+    }
+
+    public boolean iniciarSesion(String mensaje) throws IOException {
+        if (mensaje.startsWith("login ") || mensaje.startsWith("register ")) {
+            String datos[] = obtenerDatos(mensaje);
+            Sesion sesion = new Sesion(datos[1],datos[2]);
+            salida.writeUTF("Ahora estás autenticado y puedes enviar mensajes ilimitados.");
+            autenticado = true;
+            return true;
+        }
+        salida.writeUTF("Límite de mensajes alcanzado. Usa 'login nombre' o 'register nombre'.");
+        return false;
+    }
+    
+    public String[] obtenerDatos(String mensaje){
+        
+        return datos;
     }
 }
