@@ -75,18 +75,13 @@ public class UnCliente implements Runnable {
 
     public boolean iniciarSesion(String mensaje) throws IOException {
         if (mensaje.startsWith("login ") || mensaje.startsWith("register ")) {
-            String datos[] = obtenerDatos(mensaje);
-            Sesion sesion = new Sesion(datos[1],datos[2]);
+            String datos[] = mensaje.split(" ");
+            Sesion sesion = new Sesion(datos[0],datos[1],datos[2]);
             salida.writeUTF("Ahora estás autenticado y puedes enviar mensajes ilimitados.");
             autenticado = true;
             return true;
         }
         salida.writeUTF("Límite de mensajes alcanzado. Usa 'login nombre' o 'register nombre'.");
         return false;
-    }
-    
-    public String[] obtenerDatos(String mensaje){
-        
-        return datos;
     }
 }
