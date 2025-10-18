@@ -1,8 +1,9 @@
-
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
 import java.net.Socket;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 public class UnCliente implements Runnable {
 
@@ -13,7 +14,7 @@ public class UnCliente implements Runnable {
     private boolean autenticado = false;
     private int mensajesEnviados = 0;
 
-    UnCliente(Socket s, String idCliente) throws IOException {
+    public UnCliente(Socket s, String idCliente) throws IOException {
         this.socket = s;
         this.idCliente = idCliente;
         this.salida = new DataOutputStream(s.getOutputStream());
@@ -24,17 +25,24 @@ public class UnCliente implements Runnable {
     public void run() {
         try {
             salida.writeUTF("Bienvenido cliente " + idCliente
-                    + " Puedes enviar 3 mensajes antes de registrarte.\n"
-                    + "Para registrarte o iniciar sesión usa: 'registrar nombre contraseña' o 'login nombre contraseña'");
+                    + "\nPuedes enviar 3 mensajes antes de registrarte."
+                    + "\nPara registrarte o iniciar sesión usa: 'register nombre contraseña' o 'login nombre contraseña'");
 
             while (true) {
                 String mensaje = entrada.readUTF();
 
-                if (!autenticado && mensajesEnviados >= 3) {
+                // Login / registro en cualquier momento
+                if (!autenticado && (mensaje.startsWith("login ") || mensaje.startsWith("registrar "))) {
                     iniciarSesion(mensaje);
+                    continue;
                 }
-                
-                // Procesar mensajes
+
+                if (!autenticado && mensajesEnviados >= 3) {
+                    salida.writeUTF("Límite de mensajes alcanzado. Usa 'login nombre contraseña' o 'register nombre contraseña'");
+                    continue;
+                }
+
+                // Procesar mensajes directos
                 if (mensaje.startsWith("@")) {
                     String[] partes = mensaje.split(" ", 2);
                     if (partes.length > 1) {
@@ -49,6 +57,7 @@ public class UnCliente implements Runnable {
                         salida.writeUTF("Formato incorrecto. Usa: @id mensaje");
                     }
                 } else {
+                    // Mensaje a todos
                     for (UnCliente cliente : Servidorsote.clientes.values()) {
                         if (!cliente.idCliente.equals(idCliente)) {
                             cliente.salida.writeUTF("mensaje de " + idCliente + ": " + mensaje);
@@ -56,32 +65,35 @@ public class UnCliente implements Runnable {
                     }
                 }
 
-                if (!autenticado) {
-                    mensajesEnviados++;
-                }
-
+                if (!autenticado) mensajesEnviados++;
             }
 
         } catch (IOException e) {
             System.out.println("Cliente " + idCliente + " desconectado.");
+        } catch (Exception ex) {
+            Logger.getLogger(UnCliente.class.getName()).log(Level.SEVERE, null, ex);
         } finally {
             try {
                 Servidorsote.clientes.remove(idCliente);
                 socket.close();
-            } catch (IOException ignored) {
-            }
+            } catch (IOException ignored) {}
         }
     }
 
-    public boolean iniciarSesion(String mensaje) throws IOException {
-        if (mensaje.startsWith("login ") || mensaje.startsWith("register ")) {
-            String datos[] = mensaje.split(" ");
-            Sesion sesion = new Sesion(datos[0],datos[1],datos[2]);
+    private void iniciarSesion(String mensaje) throws IOException {
+        try {
+            String[] datos = mensaje.split(" ");
+            if (datos.length != 3) {
+                salida.writeUTF("Formato incorrecto. Usa: login nombre contraseña o register nombre contraseña");
+                return;
+            }
+
+            Sesion sesion = new Sesion(datos[0], datos[1], datos[2]);
             salida.writeUTF("Ahora estás autenticado y puedes enviar mensajes ilimitados.");
             autenticado = true;
-            return true;
+
+        } catch (Exception e) {
+            salida.writeUTF("Error al iniciar sesion: " + e.getMessage());
         }
-        salida.writeUTF("Límite de mensajes alcanzado. Usa 'login nombre' o 'registrar nombre'.");
-        return false;
     }
 }
