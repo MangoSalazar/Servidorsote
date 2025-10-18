@@ -1,3 +1,4 @@
+
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
@@ -11,12 +12,14 @@ public class UnCliente implements Runnable {
     private final DataOutputStream salida;
     private final DataInputStream entrada;
     final String idCliente;
+    private String[] datos;
     private boolean autenticado = false;
     private int mensajesEnviados = 0;
 
     public UnCliente(Socket s, String idCliente) throws IOException {
         this.socket = s;
         this.idCliente = idCliente;
+        
         this.salida = new DataOutputStream(s.getOutputStream());
         this.entrada = new DataInputStream(s.getInputStream());
     }
@@ -30,18 +33,19 @@ public class UnCliente implements Runnable {
 
             while (true) {
                 String mensaje = entrada.readUTF();
-
                 // Login / registro en cualquier momento
                 if (!autenticado && (mensaje.startsWith("login ") || mensaje.startsWith("registrar "))) {
                     iniciarSesion(mensaje);
                     continue;
                 }
-
                 if (!autenticado && mensajesEnviados >= 3) {
                     salida.writeUTF("Límite de mensajes alcanzado. Usa 'login nombre contraseña' o 'register nombre contraseña'");
                     continue;
                 }
-
+                if (autenticado && mensaje.startsWith("#")) {
+                    bloquearUsuario(mensaje);
+                    continue;
+                }
                 // Procesar mensajes directos
                 if (mensaje.startsWith("@")) {
                     String[] partes = mensaje.split(" ", 2);
@@ -64,8 +68,9 @@ public class UnCliente implements Runnable {
                         }
                     }
                 }
-
-                if (!autenticado) mensajesEnviados++;
+                if (!autenticado) {
+                    mensajesEnviados++;
+                }
             }
 
         } catch (IOException e) {
@@ -76,18 +81,19 @@ public class UnCliente implements Runnable {
             try {
                 Servidorsote.clientes.remove(idCliente);
                 socket.close();
-            } catch (IOException ignored) {}
+            } catch (IOException ignored) {
+            }
         }
     }
 
     private void iniciarSesion(String mensaje) throws IOException {
         try {
             String[] datos = mensaje.split(" ");
+            this.datos = new String[]{datos[1], datos[2]};
             if (datos.length != 3) {
                 salida.writeUTF("Formato incorrecto. Usa: login nombre contraseña o register nombre contraseña");
                 return;
             }
-
             Sesion sesion = new Sesion(datos[0], datos[1], datos[2]);
             salida.writeUTF("Ahora estás autenticado y puedes enviar mensajes ilimitados.");
             autenticado = true;
@@ -95,5 +101,21 @@ public class UnCliente implements Runnable {
         } catch (Exception e) {
             salida.writeUTF("Error al iniciar sesion: " + e.getMessage());
         }
+    }
+
+    private void bloquearUsuario(String mensaje) throws IOException {
+        int idUsuario = Sesion.obtenerIdPorNombre(this.datos[0]);
+        int idBloqueado = Sesion.obtenerIdPorNombre(mensaje.substring(1).trim());
+        if (!bloqExiste(idBloqueado)) return;
+        
+        
+    }
+    
+    private boolean bloqExiste(int idBloqueado) throws IOException{
+        if (idBloqueado == -1) {
+            salida.writeUTF("El usuario que deseas bloquear no existe");
+            return false;
+        }
+        return true;
     }
 }

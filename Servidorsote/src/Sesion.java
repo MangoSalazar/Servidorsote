@@ -24,11 +24,12 @@ public class Sesion {
         }
         return false;
     }
-    private void comprobarInicio(String tipoDeInicio) throws Exception{
+
+    private void comprobarInicio(String tipoDeInicio) throws Exception {
         if (tipoDeInicio.equals("login")) {
             if (!buscarUsuario(nombre, contraseña)) {
                 throw new Exception("Usuario o contraseña incorrectos");
-            }        
+            }
         }
         if (tipoDeInicio.equals("registrar")) {
             if (!registrarUsuario(nombre, contraseña)) {
@@ -36,16 +37,15 @@ public class Sesion {
             }
         }
     }
-    
+
     private boolean buscarUsuario(String nombre, String contrasena) {
         String sql = "SELECT * FROM usuarios WHERE nombre_usuario = ? AND contrasena = ?";
-        try (Connection conn = ConexionBD.conectar();
-             PreparedStatement ps = conn.prepareStatement(sql)) {
+        try (Connection conn = ConexionBD.conectar(); PreparedStatement ps = conn.prepareStatement(sql)) {
 
             ps.setString(1, nombre);
             ps.setString(2, contrasena);
             ResultSet rs = ps.executeQuery();
-            return rs.next(); 
+            return rs.next();
 
         } catch (SQLException e) {
             e.printStackTrace();
@@ -56,13 +56,13 @@ public class Sesion {
     private boolean registrarUsuario(String nombre, String contrasena) {
         String check = "SELECT * FROM usuarios WHERE nombre_usuario = ?";
         String insert = "INSERT INTO usuarios (nombre_usuario, contrasena) VALUES (?, ?)";
-        try (Connection conn = ConexionBD.conectar();
-             PreparedStatement psCheck = conn.prepareStatement(check)) {
+        try (Connection conn = ConexionBD.conectar(); PreparedStatement psCheck = conn.prepareStatement(check)) {
 
             psCheck.setString(1, nombre);
             ResultSet rs = psCheck.executeQuery();
-            if (rs.next()) return false; // Usuario ya existe
-
+            if (rs.next()) {
+                return false; // Usuario ya existe
+            }
             // Registrar nuevo usuario
             try (PreparedStatement psInsert = conn.prepareStatement(insert)) {
                 psInsert.setString(1, nombre);
@@ -76,6 +76,22 @@ public class Sesion {
             return false;
         }
     }
+
+    public static int obtenerIdPorNombre(String nombre) {
+        int id = -1;
+        String sql = "SELECT id FROM usuarios WHERE nombre = ?";
+        try (Connection conn = ConexionBD.conectar(); PreparedStatement ps = conn.prepareStatement(sql)) {
+            ps.setString(1,nombre);
+            ResultSet rs = ps.executeQuery();
+            if (rs.next()) {
+                id = rs.getInt("id");
+            }
+        } catch (Exception e) {
+            System.out.println("Error al obtener el ID del usuario: " + e.getMessage());
+        }
+        return id;
+    }
+
     public String getNombre() {
         return nombre;
     }
