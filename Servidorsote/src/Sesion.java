@@ -79,7 +79,7 @@ public class Sesion {
 
     public static int obtenerIdPorNombre(String nombre) {
         int id = -1;
-        String sql = "SELECT id FROM usuarios WHERE nombre = ?";
+        String sql = "SELECT id FROM usuarios WHERE nombre_usuario = ?";
         try (Connection conn = ConexionBD.conectar(); PreparedStatement ps = conn.prepareStatement(sql)) {
             ps.setString(1,nombre);
             ResultSet rs = ps.executeQuery();

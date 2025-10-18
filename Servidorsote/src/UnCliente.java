@@ -1,4 +1,6 @@
-
+import java.sql.SQLIntegrityConstraintViolationException;
+import java.sql.Connection;
+import java.sql.PreparedStatement;
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
@@ -43,6 +45,7 @@ public class UnCliente implements Runnable {
                     continue;
                 }
                 if (autenticado && mensaje.startsWith("#")) {
+                    
                     bloquearUsuario(mensaje);
                     continue;
                 }
@@ -95,7 +98,7 @@ public class UnCliente implements Runnable {
                 return;
             }
             Sesion sesion = new Sesion(datos[0], datos[1], datos[2]);
-            salida.writeUTF("Ahora estás autenticado y puedes enviar mensajes ilimitados.");
+            salida.writeUTF("Ahora estas autenticado y puedes enviar mensajes ilimitados.");
             autenticado = true;
 
         } catch (Exception e) {
@@ -104,11 +107,31 @@ public class UnCliente implements Runnable {
     }
 
     private void bloquearUsuario(String mensaje) throws IOException {
+        try{
         int idUsuario = Sesion.obtenerIdPorNombre(this.datos[0]);
         int idBloqueado = Sesion.obtenerIdPorNombre(mensaje.substring(1).trim());
         if (!bloqExiste(idBloqueado)) return;
         
-        
+        try (Connection conn = ConexionBD.conectar()) {
+            String sql = "INSERT INTO bloqueos (id_usuario, id_bloqueado) VALUES (?, ?)";
+            PreparedStatement ps = conn.prepareStatement(sql);
+            ps.setInt(1, idUsuario);
+            ps.setInt(2, idBloqueado);
+            ps.executeUpdate();
+        }
+
+        salida.writeUTF("Has bloqueado a " + mensaje.substring(1).trim());
+
+    } catch (SQLIntegrityConstraintViolationException e) {
+        // Ocurre si ya lo bloqueó antes (por el UNIQUE en la tabla)
+        try {
+            salida.writeUTF("Ya habías bloqueado a ese usuario.");
+        } catch (IOException ignored) {}
+    } catch (Exception e) {
+        try {
+            salida.writeUTF("Error al bloquear usuario: " + e.getMessage());
+        } catch (IOException ignored) {}
+    }
     }
     
     private boolean bloqExiste(int idBloqueado) throws IOException{
@@ -118,4 +141,5 @@ public class UnCliente implements Runnable {
         }
         return true;
     }
+    
 }
