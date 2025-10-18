@@ -24,8 +24,8 @@ public class UnCliente implements Runnable {
     public void run() {
         try {
             salida.writeUTF("Bienvenido cliente " + idCliente
-                    + ". Puedes enviar 3 mensajes antes de registrarte.\n"
-                    + "Para registrarte o iniciar sesión usa: register nombre o login nombre.");
+                    + " Puedes enviar 3 mensajes antes de registrarte.\n"
+                    + "Para registrarte o iniciar sesión usa: 'registrar nombre contraseña' o 'login nombre contraseña'");
 
             while (true) {
                 String mensaje = entrada.readUTF();
@@ -81,7 +81,7 @@ public class UnCliente implements Runnable {
             autenticado = true;
             return true;
         }
-        salida.writeUTF("Límite de mensajes alcanzado. Usa 'login nombre' o 'register nombre'.");
+        salida.writeUTF("Límite de mensajes alcanzado. Usa 'login nombre' o 'registrar nombre'.");
         return false;
     }
 }
