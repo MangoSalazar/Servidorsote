@@ -75,7 +75,6 @@ public class UnCliente implements Runnable {
                     mensajesEnviados++;
                 }
             }
-
         } catch (IOException e) {
             System.out.println("Cliente " + idCliente + " desconectado.");
         } catch (Exception ex) {
