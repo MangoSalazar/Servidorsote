@@ -24,9 +24,9 @@ public class Mensaje {
     }
 
     public Tipo getTipo(String mensaje) {
-        if (mensaje.startsWith("@")) ;
-        if (mensaje.startsWith("#")) ;
-        if (mensaje.startsWith("@")) ;
+        if (mensaje.startsWith("@")) return tipo = Tipo.uni ;
+        if (mensaje.startsWith("%")) return tipo = Tipo.multi;
+        tipo = Tipo.multi;
         return tipo;
     }
 
