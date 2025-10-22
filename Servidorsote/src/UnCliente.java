@@ -1,3 +1,4 @@
+
 import java.sql.SQLIntegrityConstraintViolationException;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -21,7 +22,7 @@ public class UnCliente implements Runnable {
     public UnCliente(Socket s, String idCliente) throws IOException {
         this.socket = s;
         this.idCliente = idCliente;
-        
+
         this.salida = new DataOutputStream(s.getOutputStream());
         this.entrada = new DataInputStream(s.getInputStream());
     }
@@ -45,7 +46,6 @@ public class UnCliente implements Runnable {
                     continue;
                 }
                 if (autenticado && mensaje.startsWith("#")) {
-                    
                     bloquearUsuario(mensaje);
                     continue;
                 }
@@ -106,39 +106,37 @@ public class UnCliente implements Runnable {
     }
 
     private void bloquearUsuario(String mensaje) throws IOException {
-        try{
-        int idUsuario = Sesion.obtenerIdPorNombre(this.datos[0]);
-        int idBloqueado = Sesion.obtenerIdPorNombre(mensaje.substring(1).trim());
-        if (!bloqExiste(idBloqueado)) return;
-        
-        try (Connection conn = ConexionBD.conectar()) {
-            String sql = "INSERT INTO bloqueos (id_usuario, id_bloqueado) VALUES (?, ?)";
-            PreparedStatement ps = conn.prepareStatement(sql);
-            ps.setInt(1, idUsuario);
-            ps.setInt(2, idBloqueado);
-            ps.executeUpdate();
+        try {
+            int idUsuario = Sesion.obtenerIdPorNombre(this.datos[0]);
+            int idBloqueado = Sesion.obtenerIdPorNombre(mensaje.substring(1).trim());
+            if (!bloqExiste(idBloqueado)) {
+                return;
+            }
+
+            try (Connection conn = ConexionBD.conectar()) {
+                String sql = "INSERT INTO bloqueos (id_usuario, id_bloqueado) VALUES (?, ?)";
+                PreparedStatement ps = conn.prepareStatement(sql);
+                ps.setInt(1, idUsuario);
+                ps.setInt(2, idBloqueado);
+                ps.executeUpdate();
+            }
+
+            salida.writeUTF("Has bloqueado a " + mensaje.substring(1).trim());
+
+        } catch (SQLIntegrityConstraintViolationException e) {
+            // Ocurre si ya lo bloqueó antes (por el UNIQUE en la tabla)
+                salida.writeUTF("Ya habías bloqueado a ese usuario.");
+        } catch (Exception e) {
+                salida.writeUTF("Error al bloquear usuario: " + e.getMessage());
         }
-
-        salida.writeUTF("Has bloqueado a " + mensaje.substring(1).trim());
-
-    } catch (SQLIntegrityConstraintViolationException e) {
-        // Ocurre si ya lo bloqueó antes (por el UNIQUE en la tabla)
-        try {
-            salida.writeUTF("Ya habías bloqueado a ese usuario.");
-        } catch (IOException ignored) {}
-    } catch (Exception e) {
-        try {
-            salida.writeUTF("Error al bloquear usuario: " + e.getMessage());
-        } catch (IOException ignored) {}
     }
-    }
-    
-    private boolean bloqExiste(int idBloqueado) throws IOException{
+
+    private boolean bloqExiste(int idBloqueado) throws IOException {
         if (idBloqueado == -1) {
             salida.writeUTF("El usuario que deseas bloquear no existe");
             return false;
         }
         return true;
     }
-    
+
 }
