@@ -1,8 +1,12 @@
 public class Mensaje {
-    String mensaje;
     Tipo tipo;
+    
+    String emisor;
     String uniDestino;
     String[] destinos = {};
+    
+    String mensaje;
+    
     
     public enum Tipo{
         uni,
@@ -11,7 +15,7 @@ public class Mensaje {
     }
     
     public Mensaje(Tipo tipo, String mensaje) {
-        
+        tipo = getTipo(mensaje);
         //this.mensaje = mensaje;
     }
 
@@ -19,7 +23,10 @@ public class Mensaje {
         return mensaje;
     }
 
-    public Tipo getTipo() {
+    public Tipo getTipo(String mensaje) {
+        if (mensaje.startsWith("@")) ;
+        if (mensaje.startsWith("#")) ;
+        if (mensaje.startsWith("@")) ;
         return tipo;
     }
 
