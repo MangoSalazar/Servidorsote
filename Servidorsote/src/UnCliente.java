@@ -35,23 +35,27 @@ public class UnCliente implements Runnable {
                     + "\nPara registrarte o iniciar sesión usa: 'register nombre contraseña' o 'login nombre contraseña'");
 
             while (true) {
-                String mensaje = entrada.readUTF();
+                String rawMensaje = entrada.readUTF();
                 // Login / registro en cualquier momento
-                if (!autenticado && (mensaje.startsWith("login ") || mensaje.startsWith("registrar "))) {
-                    iniciarSesion(mensaje);
+                if (!autenticado && (rawMensaje.startsWith("login ") || rawMensaje.startsWith("registrar "))) {
+                    iniciarSesion(rawMensaje);
                     continue;
                 }
                 if (!autenticado && mensajesEnviados >= 3) {
                     salida.writeUTF("Límite de mensajes alcanzado. Usa 'login nombre contraseña' o 'register nombre contraseña'");
                     continue;
                 }
-                if (autenticado && mensaje.startsWith("#")) {
-                    bloquearUsuario(mensaje);
+                if (autenticado && rawMensaje.startsWith("#")) {
+                    bloquearUsuario(rawMensaje);
                     continue;
                 }
                 // Procesar mensajes directos
-                if (mensaje.startsWith("@")) {
-                    String[] partes = mensaje.split(" ", 2);
+                Mensaje mensaje;
+                
+                if (rawMensaje.startsWith("@")) {
+                
+                    String[] partes = rawMensaje.split(" ", 2);
+                    
                     if (partes.length > 1) {
                         String aQuien = partes[0].substring(1);
                         UnCliente cliente = Servidorsote.clientes.get(aQuien);
