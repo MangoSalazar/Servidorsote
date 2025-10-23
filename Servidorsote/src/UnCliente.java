@@ -124,7 +124,6 @@ public class UnCliente implements Runnable {
             salida.writeUTF("Has bloqueado a " + mensaje.substring(1).trim());
 
         } catch (SQLIntegrityConstraintViolationException e) {
-            // Ocurre si ya lo bloqueó antes (por el UNIQUE en la tabla)
                 salida.writeUTF("Ya habías bloqueado a ese usuario.");
         } catch (Exception e) {
                 salida.writeUTF("Error al bloquear usuario: " + e.getMessage());

@@ -1,9 +1,12 @@
+
+import java.util.List;
+
 public class Mensaje {
     Tipo tipo;
     
     String emisor;
     String uniDestino;
-    String[] destinos = {};
+    List<String> destinos ;
     
     String mensaje;
     
@@ -11,12 +14,29 @@ public class Mensaje {
     public enum Tipo{
         uni,
         multi,
-        broad
+        broad,
+        Sistema
+    }
+    //sistema y broad
+    public Mensaje(Tipo tipo, String emisor, String mensaje) {
+        this.tipo = tipo;
+        this.emisor = emisor;
+        this.mensaje = mensaje;
     }
     
-    public Mensaje(Tipo tipo, String mensaje) {
-        tipo = getTipo(mensaje);
-        //this.mensaje = mensaje;
+    //multicast
+    public Mensaje(Tipo tipo, String emisor, List<String> destinos, String mensaje) {
+        this.tipo = tipo;
+        this.emisor = emisor;
+        this.destinos = destinos;
+        this.mensaje = mensaje;
+    }
+    //unicast
+    public Mensaje(Tipo tipo, String emisor, String uniDestino, String mensaje) {
+        this.tipo = tipo;
+        this.emisor = emisor;
+        this.uniDestino = uniDestino;
+        this.mensaje = mensaje;
     }
 
     public String getMensaje() {
@@ -24,9 +44,6 @@ public class Mensaje {
     }
 
     public Tipo getTipo(String mensaje) {
-        if (mensaje.startsWith("@")) return tipo = Tipo.uni ;
-        if (mensaje.startsWith("%")) return tipo = Tipo.multi;
-        tipo = Tipo.multi;
         return tipo;
     }
 
@@ -34,10 +51,7 @@ public class Mensaje {
         return uniDestino;
     }
 
-    public String[] getDestinos() {
-        if (Tipo.multi == this.tipo) {
-            
-        }
+    public List<String> getDestinos() {
         return destinos;
     }
     
