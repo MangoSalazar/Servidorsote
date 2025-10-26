@@ -59,4 +59,7 @@ public class Mensaje {
         return emisor;
     }
     
+    public String toString() {
+        return "[" + tipo + "] " + emisor + ": " + mensaje;
+    }
 }
