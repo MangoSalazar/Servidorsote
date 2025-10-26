@@ -5,7 +5,7 @@ public class Mensaje {
     Tipo tipo;
     
     String emisor;
-    String uniDestino;
+    String destino;
     List<String> destinos ;
     
     String mensaje;
@@ -32,10 +32,10 @@ public class Mensaje {
         this.mensaje = mensaje;
     }
     //unicast
-    public Mensaje(Tipo tipo, String emisor, String uniDestino, String mensaje) {
+    public Mensaje(Tipo tipo, String emisor, String destino, String mensaje) {
         this.tipo = tipo;
         this.emisor = emisor;
-        this.uniDestino = uniDestino;
+        this.destino = destino;
         this.mensaje = mensaje;
     }
 
@@ -43,16 +43,20 @@ public class Mensaje {
         return mensaje;
     }
 
-    public Tipo getTipo(String mensaje) {
+    public Tipo getTipo() {
         return tipo;
     }
 
-    public String getUniDestino() {
-        return uniDestino;
+    public String getdestino() {
+        return destino;
     }
 
     public List<String> getDestinos() {
         return destinos;
+    }
+
+    public String getEmisor() {
+        return emisor;
     }
     
 }
