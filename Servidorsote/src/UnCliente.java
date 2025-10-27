@@ -96,7 +96,15 @@ public class UnCliente implements Runnable {
 
     private void enviarMensajePrivado(String rawMensaje) throws IOException {
         String destino = obtenerDestino(rawMensaje);
+        if (destino.equals("")) {
+            salida.writeUTF("El destino no existe");
+            return;
+        }
         String contenido = obtenerContenido(rawMensaje);
+        if (destino.equals("")) {
+            salida.writeUTF("Formato incorrecto. Usa: @id (mensaje)");
+            return;
+        }
         Mensaje mensaje = new Mensaje(Mensaje.Tipo.uni, idCliente, destino, contenido);
         salida.writeUTF(mensaje.toString());
     }
