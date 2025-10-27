@@ -53,30 +53,8 @@ public class UnCliente implements Runnable {
                 if (rawMensaje.startsWith("@")) {
                     enviarMensajePrivado(rawMensaje);
                 }
-                /*
-                if (rawMensaje.startsWith("@")) {
-                    enviarMensajePrivado(rawMensaje);
-                    String[] partes = rawMensaje.split(" ", 2);
+                enviarBroadCast(rawMensaje);
 
-                    if (partes.length > 1) {
-                        String aQuien = partes[0].substring(1);
-                        UnCliente cliente = Servidorsote.clientes.get(aQuien);
-                        if (cliente != null) {
-                            cliente.salida.writeUTF("Directo de " + idCliente + ": " + partes[1]);
-                        } else {
-                            salida.writeUTF("No existe el cliente con id " + aQuien);
-                        }
-                    } else {
-                        salida.writeUTF("Formato incorrecto. Usa: @id mensaje");
-                    }
-                } else {
-                    // Mensaje a todos
-                    for (UnCliente cliente : Servidorsote.clientes.values()) {
-                        if (!cliente.idCliente.equals(idCliente)) {
-                            cliente.salida.writeUTF("mensaje de " + idCliente + ": " + rawMensaje);
-                        }
-                    }
-                }*/
                 if (!autenticado) {
                     mensajesEnviados++;
                 }
@@ -90,6 +68,15 @@ public class UnCliente implements Runnable {
                 Servidorsote.clientes.remove(idCliente);
                 socket.close();
             } catch (IOException ignored) {
+            }
+        }
+    }
+
+    private void enviarBroadCast(String rawMensaje) throws IOException {
+        Mensaje mensaje = new Mensaje(Mensaje.Tipo.broad, idCliente, rawMensaje);
+        for (UnCliente cliente : Servidorsote.clientes.values()) {
+            if (!cliente.idCliente.equals(idCliente)) {
+                cliente.salida.writeUTF(mensaje.toString());
             }
         }
     }
