@@ -92,10 +92,14 @@ public class UnCliente implements Runnable {
         enviarMensajes(mensaje);
     }
 
-    private void enviarMensajes(Mensaje mensaje) {
+    private void enviarMensajes(Mensaje mensaje) throws IOException {
         for (String destino : mensaje.getDestinos()) {
             UnCliente cliente = Servidorsote.clientes.get(destino);
-
+            if (cliente != null && !destino.equals(idCliente)) {
+                cliente.salida.writeUTF(mensaje.toString());
+                continue;
+            }
+            salida.writeUTF("No se encontro al cliente: " + destino);
         }
     }
 
@@ -126,7 +130,8 @@ public class UnCliente implements Runnable {
             return;
         }
         Mensaje mensaje = new Mensaje(Mensaje.Tipo.uni, idCliente, destino, contenido);
-        salida.writeUTF(mensaje.toString());
+        UnCliente cliente = Servidorsote.clientes.get(mensaje.getDestino());
+        cliente.salida.writeUTF(mensaje.toString());
     }
 
     private String obtenerDestino(String mensaje) {
@@ -139,7 +144,7 @@ public class UnCliente implements Runnable {
     private String obtenerContenido(String rawMensaje) {
         String contenido = "";
         String[] partes = rawMensaje.split(" ", 2);
-        if (partes.length > 2) {
+        if (partes.length == 2) {
             return contenido = partes[1];
         }
         return contenido;

@@ -15,7 +15,7 @@ public class Mensaje {
         uni,
         multi,
         broad,
-        Sistema
+        sistema
     }
     //sistema y broad
     public Mensaje(Tipo tipo, String emisor, String mensaje) {
@@ -47,7 +47,7 @@ public class Mensaje {
         return tipo;
     }
 
-    public String getdestino() {
+    public String getDestino() {
         return destino;
     }
 
