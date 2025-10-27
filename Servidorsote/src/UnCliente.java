@@ -6,6 +6,8 @@ import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
 import java.net.Socket;
+import java.util.Arrays;
+import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -49,10 +51,17 @@ public class UnCliente implements Runnable {
                     bloquearUsuario(rawMensaje);
                     continue;
                 }
-                // Procesar mensajes directos
+                // mensajes directos
                 if (rawMensaje.startsWith("@")) {
                     enviarMensajePrivado(rawMensaje);
+                    continue;
                 }
+                //mensajes grupales
+                if (rawMensaje.startsWith("%")) {
+                    enviarMensajeGrupal(rawMensaje);
+                    continue;
+                }
+                //mensajes globales
                 enviarBroadCast(rawMensaje);
 
                 if (!autenticado) {
@@ -70,6 +79,30 @@ public class UnCliente implements Runnable {
             } catch (IOException ignored) {
             }
         }
+    }
+
+    private void enviarMensajeGrupal(String rawMensaje) throws IOException {
+        List<String> destinos = obtenerDestinos(rawMensaje);
+        String contenido = obtenerContenido(rawMensaje);
+        if (contenido.equals("")) {
+            salida.writeUTF("Formato incorrecto. Usa: @id1,id2...idx (mensaje)");
+            return;
+        }
+        Mensaje mensaje = new Mensaje(Mensaje.Tipo.multi, idCliente, destinos, contenido);
+        enviarMensajes(mensaje);
+    }
+
+    private void enviarMensajes(Mensaje mensaje) {
+        for (String destino : mensaje.getDestinos()) {
+            UnCliente cliente = Servidorsote.clientes.get(destino);
+
+        }
+    }
+
+    private List<String> obtenerDestinos(String rawMensaje) {
+        String[] partes = rawMensaje.split(" ", 2);
+        String[] destinos = partes[0].substring(1).split(",");
+        return Arrays.asList(destinos);
     }
 
     private void enviarBroadCast(String rawMensaje) throws IOException {
