@@ -24,7 +24,6 @@ public class UnCliente implements Runnable {
     public UnCliente(Socket s, String idCliente) throws IOException {
         this.socket = s;
         this.idCliente = idCliente;
-
         this.salida = new DataOutputStream(s.getOutputStream());
         this.entrada = new DataInputStream(s.getInputStream());
     }
@@ -36,38 +35,8 @@ public class UnCliente implements Runnable {
                     + "\nPuedes enviar 3 mensajes antes de registrarte."
                     + "\nPara registrarte o iniciar sesión usa: 'register nombre contraseña' o 'login nombre contraseña'");
 
-            while (true) {
-                String rawMensaje = entrada.readUTF();
-                // Login / registro en cualquier momento
-                if (!autenticado && (rawMensaje.startsWith("login ") || rawMensaje.startsWith("registrar "))) {
-                    iniciarSesion(rawMensaje);
-                    continue;
-                }
-                if (!autenticado && mensajesEnviados >= 3) {
-                    salida.writeUTF("Límite de mensajes alcanzado. Usa 'login nombre contraseña' o 'register nombre contraseña'");
-                    continue;
-                }
-                if (autenticado && rawMensaje.startsWith("#")) {
-                    bloquearUsuario(rawMensaje);
-                    continue;
-                }
-                // mensajes directos
-                if (rawMensaje.startsWith("@")) {
-                    enviarMensajePrivado(rawMensaje);
-                    continue;
-                }
-                //mensajes grupales
-                if (rawMensaje.startsWith("%")) {
-                    enviarMensajeGrupal(rawMensaje);
-                    continue;
-                }
-                //mensajes globales
-                enviarBroadCast(rawMensaje);
+            entradasDeCliente();
 
-                if (!autenticado) {
-                    mensajesEnviados++;
-                }
-            }
         } catch (IOException e) {
             System.out.println("Cliente " + idCliente + " desconectado.");
         } catch (Exception ex) {
@@ -79,6 +48,52 @@ public class UnCliente implements Runnable {
             } catch (IOException ignored) {
             }
         }
+    }
+
+    private void entradasDeCliente() throws IOException {
+        while (true) {
+            String rawMensaje = entrada.readUTF();
+            // login/registro en cualquier momento
+            if (procesarSesion(rawMensaje)) {
+                continue;
+            }
+            // uni, multi, broad, bloqueos
+            procesarMensajes(rawMensaje);
+            if (!autenticado) {
+                mensajesEnviados++;
+            }
+        }
+    }
+
+    private boolean procesarSesion(String rawMensaje) throws IOException {
+        if (!autenticado && (rawMensaje.startsWith("login ") || rawMensaje.startsWith("registrar "))) {
+            iniciarSesion(rawMensaje);
+            return true;
+        }
+        if (!autenticado && mensajesEnviados >= 3) {
+            salida.writeUTF("Límite de mensajes alcanzado. Usa 'login nombre contraseña' o 'register nombre contraseña'");
+            return true;
+        }
+        return false;
+    }
+
+    private void procesarMensajes(String rawMensaje) throws IOException {
+        if (autenticado && rawMensaje.startsWith("#")) {
+            bloquearUsuario(rawMensaje);
+            return;
+        }
+        // mensajes directos
+        if (rawMensaje.startsWith("@")) {
+            enviarMensajePrivado(rawMensaje);
+            return;
+        }
+        //mensajes grupales
+        if (rawMensaje.startsWith("%")) {
+            enviarMensajeGrupal(rawMensaje);
+            return;
+        }
+        //mensajes globales
+        enviarBroadCast(rawMensaje);
     }
 
     private void enviarMensajeGrupal(String rawMensaje) throws IOException {
