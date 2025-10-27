@@ -96,12 +96,12 @@ public class UnCliente implements Runnable {
 
     private void enviarMensajePrivado(String rawMensaje) throws IOException {
         String destino = obtenerDestino(rawMensaje);
-        if (destino.equals("")) {
+        if (!destinoExiste(destino)) {
             salida.writeUTF("El destino no existe");
             return;
         }
         String contenido = obtenerContenido(rawMensaje);
-        if (destino.equals("")) {
+        if (contenido.equals("")) {
             salida.writeUTF("Formato incorrecto. Usa: @id (mensaje)");
             return;
         }
@@ -113,16 +113,15 @@ public class UnCliente implements Runnable {
         String destino = "";
         String[] partes = mensaje.split(" ");
         destino = partes[0].substring(1);
-        if (destinoExiste(destino)) {
-            return destino;
-        }
         return destino;
     }
 
     private String obtenerContenido(String rawMensaje) {
         String contenido = "";
         String[] partes = rawMensaje.split(" ", 2);
-        contenido = partes[1];
+        if (partes.length > 2) {
+            return contenido = partes[1];
+        }
         return contenido;
     }
 
