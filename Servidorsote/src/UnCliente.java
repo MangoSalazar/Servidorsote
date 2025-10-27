@@ -31,7 +31,7 @@ public class UnCliente implements Runnable {
     @Override
     public void run() {
         try {
-            salida.writeUTF("Bienvenido cliente " + idCliente
+            salida.writeUTF("Bienvenido cliente: " + idCliente
                     + "\nPuedes enviar 3 mensajes antes de registrarte."
                     + "\nPara registrarte o iniciar sesión usa: 'register nombre contraseña' o 'login nombre contraseña'\n");
 
