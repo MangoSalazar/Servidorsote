@@ -50,12 +50,10 @@ public class UnCliente implements Runnable {
                     continue;
                 }
                 // Procesar mensajes directos
-                Mensaje mensaje;
-                
                 if (rawMensaje.startsWith("@")) {
-                
+                    enviarMensajePrivado(rawMensaje);
                     String[] partes = rawMensaje.split(" ", 2);
-                    
+
                     if (partes.length > 1) {
                         String aQuien = partes[0].substring(1);
                         UnCliente cliente = Servidorsote.clientes.get(aQuien);
@@ -71,7 +69,7 @@ public class UnCliente implements Runnable {
                     // Mensaje a todos
                     for (UnCliente cliente : Servidorsote.clientes.values()) {
                         if (!cliente.idCliente.equals(idCliente)) {
-                            cliente.salida.writeUTF("mensaje de " + idCliente + ": " + mensaje);
+                            cliente.salida.writeUTF("mensaje de " + idCliente + ": " + rawMensaje);
                         }
                     }
                 }
@@ -91,6 +89,25 @@ public class UnCliente implements Runnable {
             }
         }
     }
+
+    private void enviarMensajePrivado(String rawMensaje) {
+        String destino = obtenerDestino(rawMensaje);
+        String contenido = obtenerContenido(rawMensaje);
+        Mensaje mensaje = new Mensaje(Mensaje.Tipo.uni, idCliente, destino, contenido); 
+    }
+
+    private String obtenerDestino(String mensaje) {
+        String destino = "";
+        String[] partes = mensaje.split(" ");
+        destino = partes[0].substring(1);
+        return destino;
+    }
+    
+    private String obtenerContenido(String rawMensaje){
+        String contenido = "";
+        return contenido;
+    }
+    
 
     private void iniciarSesion(String mensaje) throws IOException {
         try {
@@ -128,9 +145,9 @@ public class UnCliente implements Runnable {
             salida.writeUTF("Has bloqueado a " + mensaje.substring(1).trim());
 
         } catch (SQLIntegrityConstraintViolationException e) {
-                salida.writeUTF("Ya habías bloqueado a ese usuario.");
+            salida.writeUTF("Ya habías bloqueado a ese usuario.");
         } catch (Exception e) {
-                salida.writeUTF("Error al bloquear usuario: " + e.getMessage());
+            salida.writeUTF("Error al bloquear usuario: " + e.getMessage());
         }
     }
 
