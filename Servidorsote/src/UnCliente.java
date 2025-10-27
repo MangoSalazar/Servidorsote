@@ -52,6 +52,10 @@ public class UnCliente implements Runnable {
                 // Procesar mensajes directos
                 if (rawMensaje.startsWith("@")) {
                     enviarMensajePrivado(rawMensaje);
+                }
+                /*
+                if (rawMensaje.startsWith("@")) {
+                    enviarMensajePrivado(rawMensaje);
                     String[] partes = rawMensaje.split(" ", 2);
 
                     if (partes.length > 1) {
@@ -72,7 +76,7 @@ public class UnCliente implements Runnable {
                             cliente.salida.writeUTF("mensaje de " + idCliente + ": " + rawMensaje);
                         }
                     }
-                }
+                }*/
                 if (!autenticado) {
                     mensajesEnviados++;
                 }
@@ -90,24 +94,29 @@ public class UnCliente implements Runnable {
         }
     }
 
-    private void enviarMensajePrivado(String rawMensaje) {
+    private void enviarMensajePrivado(String rawMensaje) throws IOException {
         String destino = obtenerDestino(rawMensaje);
         String contenido = obtenerContenido(rawMensaje);
-        Mensaje mensaje = new Mensaje(Mensaje.Tipo.uni, idCliente, destino, contenido); 
+        Mensaje mensaje = new Mensaje(Mensaje.Tipo.uni, idCliente, destino, contenido);
+        salida.writeUTF(mensaje.toString());
     }
 
     private String obtenerDestino(String mensaje) {
         String destino = "";
         String[] partes = mensaje.split(" ");
         destino = partes[0].substring(1);
+        if (destinoExiste(destino)) {
+            return destino;
+        }
         return destino;
     }
-    
-    private String obtenerContenido(String rawMensaje){
+
+    private String obtenerContenido(String rawMensaje) {
         String contenido = "";
+        String[] partes = rawMensaje.split(" ", 2);
+        contenido = partes[1];
         return contenido;
     }
-    
 
     private void iniciarSesion(String mensaje) throws IOException {
         try {
@@ -157,6 +166,14 @@ public class UnCliente implements Runnable {
             return false;
         }
         return true;
+    }
+
+    private boolean destinoExiste(String destino) {
+        UnCliente cliente = Servidorsote.clientes.get(destino);
+        if (cliente != null) {
+            return true;
+        }
+        return false;
     }
 
 }
