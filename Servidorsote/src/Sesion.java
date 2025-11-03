@@ -8,7 +8,7 @@ public class Sesion {
 
     String nombre;
     String contraseña;
-
+    
     public Sesion(String tipoDeInicio, String nombre, String contraseña) throws Exception {
         if (!numCaracteres(nombre, contraseña)) {
             throw new Exception("Nombre o contraseña invalidos");

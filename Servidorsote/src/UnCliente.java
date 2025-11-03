@@ -17,7 +17,7 @@ public class UnCliente implements Runnable {
     private final DataOutputStream salida;
     private final DataInputStream entrada;
     final String idCliente;
-    private String[] datos;
+    private Sesion sesion;
     private boolean autenticado = false;
     private int mensajesEnviados = 0;
 
@@ -168,12 +168,11 @@ public class UnCliente implements Runnable {
     private void iniciarSesion(String mensaje) throws IOException {
         try {
             String[] datos = mensaje.split(" ");
-            this.datos = new String[]{datos[1], datos[2]};
             if (datos.length != 3) {
                 salida.writeUTF("Formato incorrecto. Usa: login nombre contraseña o register nombre contraseña");
                 return;
             }
-            Sesion sesion = new Sesion(datos[0], datos[1], datos[2]);
+            this.sesion = new Sesion(datos[0], datos[1], datos[2]);
             salida.writeUTF("Ahora estas autenticado y puedes enviar mensajes ilimitados.");
             autenticado = true;
 
@@ -184,7 +183,7 @@ public class UnCliente implements Runnable {
 
     private void bloquearUsuario(String mensaje) throws IOException {
         try {
-            int idUsuario = Sesion.obtenerIdPorNombre(this.datos[0]);
+            int idUsuario = Sesion.obtenerIdPorNombre(this.sesion.getNombre());
             int idBloqueado = Sesion.obtenerIdPorNombre(mensaje.substring(1).trim());
             if (!bloqExiste(idBloqueado)) {
                 return;
