@@ -19,6 +19,7 @@ public class UnCliente implements Runnable {
     private String[] datos;
     private boolean autenticado = false;
     private int mensajesEnviados = 0;
+    
     public UnCliente(Socket s, String idCliente) throws IOException {
         this.socket = s;
         this.idCliente = idCliente;
