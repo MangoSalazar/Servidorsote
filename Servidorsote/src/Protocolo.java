@@ -14,6 +14,7 @@ public class Protocolo {
     public static final String PREFIJO_BLOQUEO = "#";
     public static final String PREFIJO_DESBLOQUEO = "*";
     public static final String CMD_LISTAR = "listar";
+    public static final String CMD_GATO = "/gato";
     
     // Validaciones
     public static final int MIN_LONG_USER = 3;
