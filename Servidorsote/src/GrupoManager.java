@@ -139,4 +139,14 @@ public class GrupoManager {
         } catch (SQLException e) { e.printStackTrace(); }
         return -1;
     }
+    private static List<Integer> obtenerMiembros(int idGrupo) {
+        List<Integer> lista = new ArrayList<>();
+        String sql = "SELECT id_usuario FROM grupos_miembros WHERE id_grupo = ?";
+        try (Connection conn = ConexionBD.conectar(); PreparedStatement ps = conn.prepareStatement(sql)) {
+            ps.setInt(1, idGrupo);
+            ResultSet rs = ps.executeQuery();
+            while (rs.next()) lista.add(rs.getInt("id_usuario"));
+        } catch (SQLException e) { e.printStackTrace(); }
+        return lista;
+    }
 }
