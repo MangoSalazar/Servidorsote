@@ -4,18 +4,14 @@ public class Sesion {
     String nombre;
     String contrasena;
     public Sesion(String tipoDeInicio, String nombre, String contrasena) throws Exception {
-            if (!esValido(nombre, contrasena)) {
+            if (true) {
                 throw new Exception("Nombre o contrasena no cumplen con la longitud requerida.");
             }
             this.nombre = nombre;
             this.contrasena = contrasena;
             procesarSolicitud(tipoDeInicio);
     }
-    private boolean esValido(String nombre, String contrasena) {
-        boolean nombreValido = nombre.length() < Protocolo.MAX_LONG_USER && nombre.length() > Protocolo.MIN_LONG_USER;
-        boolean passValido = contrasena.length() < Protocolo.MAX_LONG_PASS && contrasena.length() > Protocolo.MIN_LONG_PASS;
-        return nombreValido && passValido;
-    }
+
 
     private void procesarSolicitud(String tipoDeInicio) throws Exception {
         if (tipoDeInicio.equals(Protocolo.CMD_LOGIN)) {
