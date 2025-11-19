@@ -15,4 +15,16 @@ public class UsuarioDAO {
             return false;
         }
     }
+    
+    public boolean validarCredenciales(String nombre, String contrasena) {
+        String sql = "SELECT 1 FROM usuarios WHERE nombre_usuario = ? AND contrasena = ?";
+        try (Connection conn = ConexionBD.conectar(); PreparedStatement ps = conn.prepareStatement(sql)) {
+            ps.setString(1, nombre);
+            ps.setString(2, contrasena);
+            return ps.executeQuery().next();
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return false;
+        }
+    }
 }
