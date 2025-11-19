@@ -11,19 +11,14 @@ public class GrupoManager {
         String sqlMiembro = "INSERT INTO grupos_miembros (id_grupo, id_usuario) VALUES (?, ?)";
         
         try (Connection conn = ConexionBD.conectar()) {
-            conn.setAutoCommit(false); // Transacción
-            
-            // 1. Crear grupo
+            conn.setAutoCommit(false);
             try (PreparedStatement ps = conn.prepareStatement(sqlGrupo, PreparedStatement.RETURN_GENERATED_KEYS)) {
                 ps.setString(1, nombreGrupo);
                 ps.setInt(2, idCreador);
                 ps.executeUpdate();
-                
                 ResultSet rs = ps.getGeneratedKeys();
                 if (rs.next()) {
                     int idGrupo = rs.getInt(1);
-                    
-                    // 2. Agregar al creador como miembro automáticamente
                     try (PreparedStatement ps2 = conn.prepareStatement(sqlMiembro)) {
                         ps2.setInt(1, idGrupo);
                         ps2.setInt(2, idCreador);
@@ -93,7 +88,7 @@ public class GrupoManager {
                 try {
                     clienteConectado.enviarMensajeObject(Protocolo.notificacion(mensajeFormateado));
                 } catch (Exception e) {
-                    e.printStackTrace();
+                    System.out.println("No se pudo conectar la base de datos");
                 }
             } else {
                 guardarMensajePendiente(idMiembro, mensajeFormateado);
@@ -119,7 +114,7 @@ public class GrupoManager {
                 }
             }
         } catch (SQLException e) {
-            e.printStackTrace();
+            System.out.println("No se pudo conectar la base de datos");
         }
         return mensajes;
     }
@@ -129,7 +124,7 @@ public class GrupoManager {
             ps.setString(1, nombre);
             ResultSet rs = ps.executeQuery();
             if (rs.next()) return rs.getInt("id");
-        } catch (SQLException e) { e.printStackTrace(); }
+        } catch (SQLException e) { System.out.println("No se pudo conectar la base de datos"); }
         return -1;
     }
     private static List<Integer> obtenerMiembros(int idGrupo) {
@@ -139,7 +134,7 @@ public class GrupoManager {
             ps.setInt(1, idGrupo);
             ResultSet rs = ps.executeQuery();
             while (rs.next()) lista.add(rs.getInt("id_usuario"));
-        } catch (SQLException e) { e.printStackTrace(); }
+        } catch (SQLException e) { System.out.println("No se pudo conectar la base de datos"); }
         return lista;
     }
     private static void guardarMensajePendiente(int idDestino, String mensaje) {
@@ -148,7 +143,7 @@ public class GrupoManager {
             ps.setInt(1, idDestino);
             ps.setString(2, mensaje);
             ps.executeUpdate();
-        } catch (SQLException e) { e.printStackTrace(); }
+        } catch (SQLException e) { System.out.println("No se pudo conectar la base de datos"); }
     }
     private static UnCliente buscarClienteOnline(int idUsuarioDB) {
         for (UnCliente cliente : Servidorsote.clientes.values()) {

@@ -11,7 +11,7 @@ public class UsuarioDAO {
             ps.setString(1, nombre);
             return ps.executeQuery().next();
         } catch (SQLException e) {
-            e.printStackTrace();
+            System.out.println("No se pudo conectar la base de datos");
             return false;
         }
     }
@@ -22,7 +22,7 @@ public class UsuarioDAO {
             ps.setString(2, contrasena);
             return ps.executeQuery().next();
         } catch (SQLException e) {
-            e.printStackTrace();
+            System.out.println("No se pudo conectar la base de datos");
             return false;
         }
     }
@@ -36,7 +36,7 @@ public class UsuarioDAO {
             ps.executeUpdate();
             return true;
         } catch (SQLException e) {
-            e.printStackTrace();
+            System.out.println("No se pudo conectar la base de datos");
             return false;
         }
     }
@@ -47,7 +47,7 @@ public class UsuarioDAO {
             ResultSet rs = ps.executeQuery();
             if (rs.next()) return rs.getInt("id");
         } catch (SQLException e) {
-            e.printStackTrace();
+            System.out.println("No se pudo conectar la base de datos");
         }
         return -1;
     }
@@ -74,7 +74,7 @@ public class UsuarioDAO {
             return rs.getString("nombre_usuario");
         }
     } catch (SQLException e) {
-        e.printStackTrace();
+        System.out.println("No se pudo conectar la base de datos");
     }
     return null;
 }
