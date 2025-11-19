@@ -15,7 +15,6 @@ public class UsuarioDAO {
             return false;
         }
     }
-    
     public boolean validarCredenciales(String nombre, String contrasena) {
         String sql = "SELECT 1 FROM usuarios WHERE nombre_usuario = ? AND contrasena = ?";
         try (Connection conn = ConexionBD.conectar(); PreparedStatement ps = conn.prepareStatement(sql)) {
@@ -60,7 +59,6 @@ public class UsuarioDAO {
             ps.executeUpdate();
             return true;
         } catch (SQLException e) {
-            // Probablemente ya estaba bloqueado (constraint unique)
             return false;
         }
     }
