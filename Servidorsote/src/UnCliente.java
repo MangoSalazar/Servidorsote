@@ -56,6 +56,34 @@ private final Socket socket;
             enrutarMensaje(rawMensaje);
         }
     }
+    private void enrutarMensaje(String rawMensaje) throws IOException {
+        if (rawMensaje.isEmpty()) return;
+        String primerCaracter = rawMensaje.substring(0, 1);
+        if (rawMensaje.startsWith("+")) { 
+            if (!autenticado) { enviarMensajeObject(Protocolo.ERR_LOGIN); return; }
+            manejarComandoGrupo(rawMensaje);
+            return;
+        }
+        if (rawMensaje.startsWith("$")) {
+            if (!autenticado) { enviarMensajeObject(Protocolo.ERR_LOGIN); return; }
+            manejarMensajeGrupo(rawMensaje);
+            return;
+        }
+        switch (primerCaracter) {
+            case Protocolo.PREFIJO_BLOQUEO:
+                manejarBloqueo(rawMensaje);
+                break;
+            case Protocolo.PREFIJO_PRIVADO:
+                manejarPrivado(rawMensaje);
+                break;
+            case Protocolo.PREFIJO_GRUPAL:
+                manejarMulticast(rawMensaje);
+                break;
+            default:
+                manejarBroadcast(rawMensaje);
+                break;
+        }
+    }
     private void manejarComandoGrupo(String rawMensaje) throws IOException {
         String[] partes = rawMensaje.split(" ", 2);
         String comando = partes[0];
