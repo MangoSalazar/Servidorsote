@@ -65,6 +65,9 @@ public class Protocolo {
             "Bienvenido cliente: " + idCliente + ". Usa 'login' o 'register'."
         );
     }
+    public static Mensaje notificacion(String texto) {
+        return new Mensaje(Mensaje.Tipo.sistema, EMISOR_SISTEMA, texto);
+    }
 
     public static Mensaje errorGenerico(String detalle) {
         return new Mensaje(
