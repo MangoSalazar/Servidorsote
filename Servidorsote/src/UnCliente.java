@@ -130,6 +130,28 @@ private final Socket socket;
                 break;
         }
     }
+    private void manejarListarUsuarios() throws IOException {
+        if (!autenticado) {
+            enviarMensajeObject(Protocolo.ERR_REQ_SESION);
+            return;
+        }
+        StringBuilder lista = new StringBuilder();
+        int contador = 0;
+        for (UnCliente cliente : Servidorsote.clientes.values()) {
+            if (cliente.autenticado && cliente.nombreUsuarioAutenticado != null) {
+                lista.append("• ").append(cliente.nombreUsuarioAutenticado);
+                if (cliente.idCliente.equals(this.idCliente)) {
+                    lista.append(" (Tú)");
+                }
+                lista.append("\n");
+                contador++;
+            }
+        }
+        if (contador == 0) {
+            lista.append("(Nadie más conectado)\n");
+        }
+        enviarMensajeObject(Protocolo.listaDeUsuarios(lista.toString()));
+    }
     private void manejarComandoGrupo(String rawMensaje) throws IOException {
         String[] partes = rawMensaje.split(" ", 2);
         String comando = partes[0];
