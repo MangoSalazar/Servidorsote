@@ -1,7 +1,5 @@
-
-
-
 public class Sesion {
+    
     private final UsuarioDAO usuarioDAO = new UsuarioDAO();
     String nombre;
     String contraseña;
@@ -24,12 +22,15 @@ public class Sesion {
             if (!usuarioDAO.validarCredenciales(nombre, contraseña)) {
                 throw new Exception("Usuario o contraseña incorrectos");
             }
-        } else if (tipoDeInicio.equals(Protocolo.CMD_REGISTRAR)) { // Usando constante
+        } else if (tipoDeInicio.equals(Protocolo.CMD_REGISTRAR)) {
             if (!usuarioDAO.registrarUsuario(nombre, contraseña)) {
                 throw new Exception("El usuario ya existe o error en base de datos");
             }
         } else {
             throw new Exception("Comando de sesión desconocido");
         }
+    }
+    public String getNombre() {
+        return nombre; 
     }
 }
