@@ -17,7 +17,40 @@ public class GatoManager {
         notificarUsuario(idDestino, Protocolo.notificacion("¡" + dao.obtenerNombrePorId(idEmisor) + " te invitó a jugar Gato! Usa: /gato aceptar " + dao.obtenerNombrePorId(idEmisor)));
         return "Invitación enviada a " + nombreDestino;
     }
+    public static String aceptar(int idAcepta, String nombreInvito) {
+        int idInvito = dao.obtenerIdPorNombre(nombreInvito);
+        if (!tieneInvitacion(idAcepta, idInvito)) return "No tienes invitación de este usuario.";
+        String key = generarKey(idAcepta, idInvito);
+        PartidaGato partida = new PartidaGato(idInvito, idAcepta);
+        partidasActivas.put(key, partida);
+        
+        invitaciones.get(idAcepta).remove((Integer) idInvito);
+        notificarAmbos(partida, "¡Partida Iniciada! " + nombreInvito + " (X) vs Tú (O).\n" + partida.dibujarTablero());
+        return "Partida aceptada.";
+    }
 
+    public static String jugar(int idJugador, String nombreOponente, String casillaStr) {
+        try {
+            int idOponente = dao.obtenerIdPorNombre(nombreOponente);
+            PartidaGato partida = partidasActivas.get(generarKey(idJugador, idOponente));
+            if (partida == null) return "No estás jugando contra " + nombreOponente;
+
+            String estado = partida.realizarJugada(idJugador, Integer.parseInt(casillaStr));
+            verificarEstadoPartida(partida, idJugador, idOponente, estado);
+            return "Jugada realizada.";
+        } catch (Exception e) { return "Error: " + e.getMessage(); }
+    }
+    private static void verificarEstadoPartida(PartidaGato partida, int idJugador, int idOponente, String tablero) {
+        if (partida.hayGanador()) {
+            finalizarPartida(idJugador, idOponente, "¡Ganaste contra " + dao.obtenerNombrePorId(idOponente) + "!", "Perdiste contra " + dao.obtenerNombrePorId(idJugador));
+        } else if (partida.esEmpate()) {
+            notificarAmbos(partida, "Juego Empatado.\n" + tablero);
+            partidasActivas.remove(generarKey(idJugador, idOponente));
+        } else {
+            notificarAmbos(partida, tablero);
+            notificarUsuario(partida.getOponente(idJugador), Protocolo.notificacion("Tu turno contra " + dao.obtenerNombrePorId(idJugador)));
+        }
+    }
 
     public static void manejarDesconexion(int idDesconectado) {
         partidasActivas.forEach((key, partida) -> {
