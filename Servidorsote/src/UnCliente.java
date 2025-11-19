@@ -42,15 +42,12 @@ private final Socket socket;
     private void cicloPrincipal() throws IOException {
         while (true) {
             String rawMensaje = entrada.readUTF();
-            
             if (esComandoSesion(rawMensaje)) {
                 procesarSesion(rawMensaje);
                 continue;
             }
-
             if (!autenticado) {
                 if (mensajesEnviados >= Protocolo.LIMITE_MENSAJES_GUEST) {
-                    // USANDO CONSTANTE DE PROTOCOLO
                     enviarMensajeObject(Protocolo.INFO_LIMITE_ALCANZADO);
                     continue;
                 }
@@ -61,5 +58,34 @@ private final Socket socket;
     }
     
 
+    public void enviarMensajeObject(Mensaje mensaje) throws IOException {
+        salida.writeUTF(mensaje.toString());
+    }
 
+    private String obtenerDestino(String raw) {
+        String[] partes = raw.split(" ");
+        return partes[0].substring(1); // Quita el prefijo (@ o $)
+    }
+    
+    private String obtenerContenido(String raw) {
+        String[] partes = raw.split(" ", 2);
+        return (partes.length == 2) ? partes[1] : "";
+    }
+
+    private List<String> obtenerDestinosLista(String raw) {
+        String[] partes = raw.split(" ", 2);
+        String[] destinos = partes[0].substring(1).split(",");
+        return Arrays.asList(destinos);
+    }
+
+    private boolean clienteEstaConectado(String idDestino) {
+        return Servidorsote.clientes.containsKey(idDestino);
+    }
+
+    private void limpiarConexion() {
+        try {
+            Servidorsote.clientes.remove(idCliente);
+            socket.close();
+        } catch (IOException ignored) {}
+    }
 }
