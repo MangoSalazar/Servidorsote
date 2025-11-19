@@ -78,4 +78,56 @@ public class GrupoManager {
             return "Error al eliminar: " + e.getMessage();
         }
     }
+    public static void enviarMensajeGrupo(int idEmisor, String nombreGrupo, String contenido) {
+        int idGrupo = obtenerIdGrupo(nombreGrupo);
+        if (idGrupo == -1) return;
+
+        String nombreEmisor = Sesion.obtenerNombrePorId(idEmisor);
+        List<Integer> miembros = obtenerMiembros(idGrupo);
+
+        String mensajeFormateado = "[Grupo " + nombreGrupo + "] " + nombreEmisor + ": " + contenido;
+        Mensaje msgObj = new Mensaje(Mensaje.Tipo.multi, nombreEmisor, nombreGrupo, contenido); 
+
+
+        for (int idMiembro : miembros) {
+            if (idMiembro == idEmisor) continue;
+
+            UnCliente clienteConectado = buscarClienteOnline(idMiembro);
+
+            if (clienteConectado != null) {
+                try {
+                    clienteConectado.enviarMensajeObject(Protocolo.notificacion(mensajeFormateado));
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            } else {
+                guardarMensajePendiente(idMiembro, mensajeFormateado);
+            }
+        }
+    }
+    public static List<String> obtenerMensajesPendientes(int idUsuario) {
+        List<String> mensajes = new ArrayList<>();
+        String sqlSelect = "SELECT id, mensaje_formateado FROM mensajes_pendientes WHERE id_usuario_destino = ?";
+        String sqlDelete = "DELETE FROM mensajes_pendientes WHERE id = ?";
+
+        try (Connection conn = ConexionBD.conectar()) {
+            // 1. Leer mensajes
+            try (PreparedStatement ps = conn.prepareStatement(sqlSelect)) {
+                ps.setInt(1, idUsuario);
+                ResultSet rs = ps.executeQuery();
+                while (rs.next()) {
+                    mensajes.add(rs.getString("mensaje_formateado"));
+                    
+                    // 2. Borrar mensaje leído (dentro del mismo loop o batch)
+                    try (PreparedStatement psDel = conn.prepareStatement(sqlDelete)) {
+                        psDel.setInt(1, rs.getInt("id"));
+                        psDel.executeUpdate();
+                    }
+                }
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return mensajes;
+    }
 }
