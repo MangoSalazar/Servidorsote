@@ -82,14 +82,15 @@ public class GrupoManager {
         List<Integer> miembros = obtenerMiembros(idGrupo);
         String mensajeFormateado = "[Grupo " + nombreGrupo + "] " + nombreEmisor + ": " + contenido;
         for (int idMiembro : miembros) {
-            if (idMiembro == idEmisor) continue; 
+            if (idMiembro == idEmisor) continue;
+            if (usuarioDAO.hayBloqueoEntre(idEmisor, idMiembro)) {
+                continue; 
+            }
             UnCliente clienteConectado = buscarClienteOnline(idMiembro);
             if (clienteConectado != null) {
                 try {
                     clienteConectado.enviarMensajeObject(Protocolo.notificacion(mensajeFormateado));
-                } catch (Exception e) {
-                    System.out.println("No se pudo conectar la base de datos");
-                }
+                } catch (Exception e) { e.printStackTrace(); }
             } else {
                 guardarMensajePendiente(idMiembro, mensajeFormateado);
             }
