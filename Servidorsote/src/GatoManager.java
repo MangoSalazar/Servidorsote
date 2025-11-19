@@ -20,12 +20,18 @@ public class GatoManager {
         List<Integer> lista = invitaciones.get(idAcepta);
         return lista != null && lista.contains(idInvito);
     }
-
+    private static String validarInvitacion(int idEmisor, int idDestino) {
+        if (idDestino == -1) return "Usuario no existe.";
+        if (idEmisor == idDestino) return "No puedes jugar contra ti mismo.";
+        if (dao.hayBloqueoEntre(idEmisor, idDestino)) return "Bloqueo activo con este usuario.";
+        if (buscarClienteOnline(idDestino) == null) return "Usuario no conectado.";
+        if (partidasActivas.containsKey(generarKey(idEmisor, idDestino))) return "Ya están jugando.";
+        return null;
+    }
     private static String generarKey(int id1, int id2) {
         return Math.min(id1, id2) + "-" + Math.max(id1, id2);
     }
 
-    // Método duplicado por necesidad de acceso estático, idealmente en una clase Utils o Servidorsote
     private static void notificarUsuario(int idUsuario, Mensaje msg) {
         for (UnCliente c : Servidorsote.clientes.values()) {
             if (c.getIdUsuarioDB() == idUsuario) {
@@ -33,13 +39,10 @@ public class GatoManager {
             }
         }
     }
-
     private static void notificarAmbos(PartidaGato p, String texto) {
         notificarUsuario(p.idJugadorX, Protocolo.notificacion(texto));
         notificarUsuario(p.idJugadorO, Protocolo.notificacion(texto));
     }
-    
-    // Necesitamos este helper aquí también
     private static UnCliente buscarClienteOnline(int idDB) {
         for (UnCliente c : Servidorsote.clientes.values()) if (c.getIdUsuarioDB() == idDB) return c;
         return null;
