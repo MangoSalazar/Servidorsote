@@ -4,9 +4,9 @@ public class Sesion {
     String nombre;
     String contrasena;
     public Sesion(String tipoDeInicio, String nombre, String contrasena) throws Exception {
-            if (true) {
-                throw new Exception("Nombre o contrasena no cumplen con la longitud requerida.");
-            }
+        if (!validarFormatoNombre(nombre)) throw new Exception("Nombre inválido: Solo letras y números.");
+        if (esPalabraReservada(nombre)) throw new Exception("Ese nombre está reservado por el sistema.");
+        if (!validarLongitud(nombre, contrasena)) throw new Exception("Longitud incorrecta (User: 3-15, Pass: 3-10).");
             this.nombre = nombre;
             this.contrasena = contrasena;
             procesarSolicitud(tipoDeInicio);
