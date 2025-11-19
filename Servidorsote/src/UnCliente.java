@@ -40,19 +40,27 @@ public class UnCliente implements Runnable {
             }
     }
     
-    private void entradasDeCliente() throws IOException {
+    private void cicloPrincipal() throws IOException {
         while (true) {
             String rawMensaje = entrada.readUTF();
-            // login/registro en cualquier momento
-            if (procesarSesion(rawMensaje)) {
+            
+            if (esComandoSesion(rawMensaje)) {
+                procesarSesion(rawMensaje);
                 continue;
             }
-            // uni, multi, broad, bloqueos
-            procesarMensajes(rawMensaje);
+
             if (!autenticado) {
+                if (mensajesEnviados >= Protocolo.LIMITE_MENSAJES_GUEST) {
+                    // USANDO CONSTANTE DE PROTOCOLO
+                    enviarMensajeObject(Protocolo.INFO_LIMITE_ALCANZADO);
+                    continue;
+                }
                 mensajesEnviados++;
             }
+            enrutarMensaje(rawMensaje);
         }
     }
+    
+
 
 }
