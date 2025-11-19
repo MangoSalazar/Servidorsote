@@ -149,4 +149,12 @@ public class GrupoManager {
         } catch (SQLException e) { e.printStackTrace(); }
         return lista;
     }
+    private static void guardarMensajePendiente(int idDestino, String mensaje) {
+        String sql = "INSERT INTO mensajes_pendientes (id_usuario_destino, mensaje_formateado) VALUES (?, ?)";
+        try (Connection conn = ConexionBD.conectar(); PreparedStatement ps = conn.prepareStatement(sql)) {
+            ps.setInt(1, idDestino);
+            ps.setString(2, mensaje);
+            ps.executeUpdate();
+        } catch (SQLException e) { e.printStackTrace(); }
+    }
 }
