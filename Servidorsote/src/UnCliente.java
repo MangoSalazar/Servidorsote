@@ -56,8 +56,35 @@ private final Socket socket;
             enrutarMensaje(rawMensaje);
         }
     }
-    
 
+    private void manejarPrivado(String rawMensaje) throws IOException {
+        String destino = obtenerDestino(rawMensaje);
+        if (!clienteEstaConectado(destino)) {
+            enviarMensajeObject(Protocolo.errorGenerico("Usuario no conectado o no existe."));
+            return;
+        }
+        String contenido = obtenerContenido(rawMensaje);
+        Mensaje msg = new Mensaje(Mensaje.Tipo.uni, idCliente, destino, contenido);
+        Servidorsote.clientes.get(destino).enviarMensajeObject(msg);
+    }
+    private void manejarMulticast(String rawMensaje) throws IOException {
+        List<String> destinos = obtenerDestinosLista(rawMensaje);
+        String contenido = obtenerContenido(rawMensaje);
+        Mensaje msg = new Mensaje(Mensaje.Tipo.multi, idCliente, destinos, contenido);
+        for (String dest : destinos) {
+            if (clienteEstaConectado(dest)) {
+                Servidorsote.clientes.get(dest).enviarMensajeObject(msg);
+            }
+        }
+    }
+    private void manejarBroadcast(String rawMensaje) throws IOException {
+        Mensaje msg = new Mensaje(Mensaje.Tipo.broad, idCliente, rawMensaje);
+        for (UnCliente c : Servidorsote.clientes.values()) {
+            if (!c.idCliente.equals(this.idCliente)) {
+                c.enviarMensajeObject(msg);
+            }
+        }
+    }
     public void enviarMensajeObject(Mensaje mensaje) throws IOException {
         salida.writeUTF(mensaje.toString());
     }
