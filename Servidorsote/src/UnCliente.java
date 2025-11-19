@@ -197,39 +197,43 @@ private final Socket socket;
             enviarMensajeObject(Protocolo.ERR_NO_BLOQUEADO);
         }
     }
-    private void manejarPrivado(String rawMensaje) throws IOException {
+private void manejarPrivado(String rawMensaje) throws IOException {
         String destinoNombre = obtenerDestino(rawMensaje);
-        int idDestino = usuarioDAO.obtenerIdPorNombre(destinoNombre);
-        if (idDestino == -1) {
-            enviarMensajeObject(Protocolo.errorGenerico("El usuario no existe."));
+        UnCliente clienteDestino = buscarClientePorNombre(destinoNombre);
+        if (clienteDestino == null) {
+            enviarMensajeObject(Protocolo.errorGenerico("El usuario '" + destinoNombre + "' no está conectado."));
             return;
         }
-        UnCliente clienteDestino = Servidorsote.clientes.get(destinoNombre);
-        if (clienteDestino == null) {
-            enviarMensajeObject(Protocolo.errorGenerico("El usuario no está conectado."));
-            return;
+        int idDestino = usuarioDAO.obtenerIdPorNombre(destinoNombre);
+        if (idDestino == -1) {
+             enviarMensajeObject(Protocolo.errorGenerico("El usuario no existe en la base de datos."));
+             return;
         }
         if (usuarioDAO.hayBloqueoEntre(this.idUsuarioDB, idDestino)) {
             enviarMensajeObject(Protocolo.ERR_BLOQUEO_ACTIVO);
             return;
         }
         String contenido = obtenerContenido(rawMensaje);
-        Mensaje msg = new Mensaje(Mensaje.Tipo.uni, idCliente, destinoNombre, contenido);
+        Mensaje msg = new Mensaje(Mensaje.Tipo.uni, this.nombreUsuarioAutenticado, destinoNombre, contenido);
         clienteDestino.enviarMensajeObject(msg);
+        enviarMensajeObject(Protocolo.notificacion("-> @" + destinoNombre + ": " + contenido));
     }
     private void manejarMulticast(String rawMensaje) throws IOException {
-        List<String> destinos = obtenerDestinosLista(rawMensaje);
+        List<String> destinosNombres = obtenerDestinosLista(rawMensaje);
         String contenido = obtenerContenido(rawMensaje);
-        Mensaje msg = new Mensaje(Mensaje.Tipo.multi, idCliente, destinos, contenido);
-        for (String destNombre : destinos) {
-            UnCliente clienteDestino = Servidorsote.clientes.get(destNombre);
+        Mensaje msg = new Mensaje(Mensaje.Tipo.multi, this.nombreUsuarioAutenticado, destinosNombres, contenido);
+        int enviados = 0;
+        for (String destNombre : destinosNombres) {
+            UnCliente clienteDestino = buscarClientePorNombre(destNombre);
             if (clienteDestino != null) {
                 if (usuarioDAO.hayBloqueoEntre(this.idUsuarioDB, clienteDestino.getIdUsuarioDB())) {
-                    continue;
+                    continue; 
                 }
                 clienteDestino.enviarMensajeObject(msg);
+                enviados++;
             }
         }
+        enviarMensajeObject(Protocolo.notificacion("Mensaje enviado a " + enviados + " usuarios."));
     }
     private void manejarBroadcast(String rawMensaje) throws IOException {
         Mensaje msg = new Mensaje(Mensaje.Tipo.broad, idCliente, rawMensaje);
@@ -274,5 +278,15 @@ private final Socket socket;
     
     public int getIdUsuarioDB() {
         return this.idUsuarioDB;
+    }
+    private UnCliente buscarClientePorNombre(String nombreBuscado) {
+        for (UnCliente cliente : Servidorsote.clientes.values()) {
+            if (cliente.autenticado 
+                && cliente.nombreUsuarioAutenticado != null 
+                && cliente.nombreUsuarioAutenticado.equalsIgnoreCase(nombreBuscado)) {
+                return cliente;
+            }
+        }
+        return null;
     }
 }
