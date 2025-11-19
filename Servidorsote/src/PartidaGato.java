@@ -23,4 +23,16 @@ public class PartidaGato {
         cambiarTurno();
         return dibujarTablero();
     }
+    private void cambiarTurno() {
+        turnoActual = (turnoActual == idJugadorX) ? idJugadorO : idJugadorX;
+    }
+    public boolean hayGanador() {
+        for (int i = 0; i < 3; i++) {
+            if (check(tablero[i][0], tablero[i][1], tablero[i][2])) return true;
+            if (check(tablero[0][i], tablero[1][i], tablero[2][i])) return true;
+        }
+        if (check(tablero[0][0], tablero[1][1], tablero[2][2])) return true;
+        if (check(tablero[0][2], tablero[1][1], tablero[2][0])) return true;
+        return false;
+    }
 }
