@@ -78,7 +78,7 @@ private final Socket socket;
             this.autenticado = true;
             this.nombreUsuarioAutenticado = uNombre;
             this.idUsuarioDB = usuarioDAO.obtenerIdPorNombre(uNombre);
-            enviarMensajeObject(Protocolo.INFO_LOGIN_EXITOSO);
+            enviarMensajeObject(Protocolo.INFO_LOGIN_EXITOSO(uNombre));
             System.out.println("Usuario autenticado: " + uNombre + " (ID DB: " + idUsuarioDB + ")");
             cargarMensajesPendientes();
         } catch (Exception e) {

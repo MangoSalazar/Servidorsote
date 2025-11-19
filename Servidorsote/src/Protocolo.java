@@ -51,10 +51,10 @@ public class Protocolo {
         EMISOR_SISTEMA, 
         "Límite de mensajes invitado alcanzado. Por favor inicia sesión."
     );
-
     public static Mensaje INFO_LOGIN_EXITOSO(String nombreUsuario) {
         String texto = """
-            ¡Autenticación Exitosa! Hola.
+            ¡Autenticación Exitosa! Hola """+nombreUsuario+"\n"+
+            """
             COMANDOS DISPONIBLES (Usuarios Registrados):
             
             [Chat Básico]
@@ -77,8 +77,9 @@ public class Protocolo {
     
     public static Mensaje bienvenida(String idCliente) {
         String texto = """
-            Bienvenido al Servidor, Cliente:
-            Comandos disponibles (Sin Autenticación):
+            Bienvenido al Servidor, Cliente """+idCliente+"\n"+
+            """
+             Comandos disponibles (Sin Autenticación):
             1. login <usuario> <contraseña>    -> Iniciar sesión
             2. register <usuario> <contraseña> -> Crear cuenta nueva
             3. <escribir mensaje>              -> Chat Global (Tienes 3 mensajes de prueba)
