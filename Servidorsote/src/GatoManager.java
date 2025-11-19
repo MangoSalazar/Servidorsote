@@ -1,4 +1,5 @@
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -15,6 +16,25 @@ public class GatoManager {
         invitaciones.computeIfAbsent(idDestino, k -> new ArrayList<>()).add(idEmisor);
         notificarUsuario(idDestino, Protocolo.notificacion("¡" + dao.obtenerNombrePorId(idEmisor) + " te invitó a jugar Gato! Usa: /gato aceptar " + dao.obtenerNombrePorId(idEmisor)));
         return "Invitación enviada a " + nombreDestino;
+    }
+
+
+    public static void manejarDesconexion(int idDesconectado) {
+        partidasActivas.forEach((key, partida) -> {
+            if (partida.idJugadorX == idDesconectado || partida.idJugadorO == idDesconectado) {
+                int idGanador = (partida.idJugadorX == idDesconectado) ? partida.idJugadorO : partida.idJugadorX;
+                finalizarPartida(idGanador, idDesconectado, "Tu oponente se desconectó. ¡Ganaste!", null);
+            }
+        });
+        invitaciones.remove(idDesconectado);
+    }
+
+    private static void finalizarPartida(int idGanador, int idPerdedor, String msgGanador, String msgPerdedor) {
+        dao.registrarFinPartida(idGanador, idPerdedor);
+        partidasActivas.remove(generarKey(idGanador, idPerdedor));
+        
+        notificarUsuario(idGanador, Protocolo.notificacion(msgGanador + dao.obtenerStats(idGanador)));
+        if (msgPerdedor != null) notificarUsuario(idPerdedor, Protocolo.notificacion(msgPerdedor + dao.obtenerStats(idPerdedor)));
     }
     private static boolean tieneInvitacion(int idAcepta, int idInvito) {
         List<Integer> lista = invitaciones.get(idAcepta);
