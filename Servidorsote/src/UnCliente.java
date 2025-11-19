@@ -1,7 +1,4 @@
 
-import java.sql.SQLIntegrityConstraintViolationException;
-import java.sql.Connection;
-import java.sql.PreparedStatement;
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
@@ -16,9 +13,10 @@ public class UnCliente implements Runnable {
     private final DataOutputStream salida;
     private final DataInputStream entrada;
     final String idCliente;
-    private String[] datos;
+    
+    private final UsuarioDAO usuarioDAO = new UsuarioDAO(); // Instancia del DAO
     private boolean autenticado = false;
-    private int mensajesEnviados = 0;
+    private String nombreUsuarioAutenticado = null;
     
     public UnCliente(Socket s, String idCliente) throws IOException {
         this.socket = s;
