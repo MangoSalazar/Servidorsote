@@ -157,4 +157,12 @@ public class GrupoManager {
             ps.executeUpdate();
         } catch (SQLException e) { e.printStackTrace(); }
     }
+    private static UnCliente buscarClienteOnline(int idUsuarioDB) {
+        for (UnCliente cliente : Servidorsote.clientes.values()) {
+            if (cliente.getIdUsuarioDB() == idUsuarioDB) {
+                return cliente;
+            }
+        }
+        return null;
+    }
 }
