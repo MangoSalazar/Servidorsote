@@ -28,7 +28,7 @@ private final Socket socket;
     @Override
     public void run() {
         try {
-            enviarMensajeObject(Protocolo.bienvenida(idCliente));
+            enviarMensajeObject(Protocolo.bienvenida());
             cicloPrincipal();
         } catch (IOException e) {
             System.out.println("Cliente " + idCliente + " (" + nombreUsuarioAutenticado + ") desconectado.");
@@ -78,7 +78,7 @@ private final Socket socket;
             this.autenticado = true;
             this.nombreUsuarioAutenticado = uNombre;
             this.idUsuarioDB = usuarioDAO.obtenerIdPorNombre(uNombre);
-            enviarMensajeObject(Protocolo.INFO_LOGIN_EXITOSO(uNombre));
+            enviarMensajeObject(Protocolo.INFO_LOGIN_EXITOSO());
             System.out.println("Usuario autenticado: " + uNombre + " (ID DB: " + idUsuarioDB + ")");
             cargarMensajesPendientes();
         } catch (Exception e) {
@@ -148,7 +148,7 @@ private final Socket socket;
         String contenido = obtenerContenido(rawMensaje);
 
         if (contenido.isEmpty()) {
-            enviarMensajeObject(Protocolo.errorGenerico("Mensaje vacío. Usa $grupo (mensaje)"));
+            enviarMensajeObject(Protocolo.errorGenerico("Mensaje vacio. Usa $grupo (mensaje)"));
             return;
         }
         GrupoManager.enviarMensajeGrupo(this.idUsuarioDB, nombreGrupo, contenido);

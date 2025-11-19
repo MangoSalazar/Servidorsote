@@ -65,7 +65,7 @@ public class ConexionBD {
         try {
             return DriverManager.getConnection(URL);
         } catch (SQLException e) {
-            System.out.println("Error crítico de conexión BD: " + e.getMessage());
+            System.out.println("Error crítico de conexion BD: " + e.getMessage());
             return null;
         }
     }
@@ -76,7 +76,7 @@ public class ConexionBD {
             
             if (conn == null) return;
 
-            // Ejecutar creación de tablas
+            // Ejecutar creacion de tablas
             stmt.execute(TBL_USUARIOS);
             stmt.execute(TBL_BLOQUEOS);
             stmt.execute(TBL_GRUPOS);

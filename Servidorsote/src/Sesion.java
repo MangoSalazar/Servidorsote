@@ -27,7 +27,7 @@ public class Sesion {
                 throw new Exception("El usuario ya existe o error en base de datos");
             }
         } else {
-            throw new Exception("Comando de sesión desconocido");
+            throw new Exception("Comando de sesion desconocido");
         }
     }
     public String getNombre() {
