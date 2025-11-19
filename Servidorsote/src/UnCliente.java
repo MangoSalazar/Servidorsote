@@ -56,6 +56,36 @@ private final Socket socket;
             enrutarMensaje(rawMensaje);
         }
     }
+    private void procesarSesion(String mensaje) throws IOException {
+        if (autenticado) {
+            enviarMensajeObject(Protocolo.INFO_YA_AUTENTICADO);
+            return;
+        }
+        
+        String[] partes = mensaje.split(" ");
+        if (partes.length != 3) {
+            enviarMensajeObject(Protocolo.ERR_FORMATO);
+            return;
+        }
+
+        String comando = partes[0];
+        String uNombre = partes[1];
+        String uPass = partes[2];
+
+        try {
+            new Sesion(comando, uNombre, uPass);
+            this.autenticado = true;
+            this.nombreUsuarioAutenticado = uNombre;
+            this.idUsuarioDB = usuarioDAO.obtenerIdPorNombre(uNombre);
+            
+            enviarMensajeObject(Protocolo.INFO_LOGIN_EXITOSO);
+            System.out.println("Usuario autenticado: " + uNombre + " (ID DB: " + idUsuarioDB + ")");
+            cargarMensajesPendientes();
+
+        } catch (Exception e) {
+            enviarMensajeObject(Protocolo.errorGenerico(e.getMessage()));
+        }
+    }
     private void enrutarMensaje(String rawMensaje) throws IOException {
         if (rawMensaje.isEmpty()) return;
         String primerCaracter = rawMensaje.substring(0, 1);
