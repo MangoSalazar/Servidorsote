@@ -103,12 +103,12 @@ private final Socket socket;
         }
         String primerCaracter = rawMensaje.substring(0, 1);
         if (rawMensaje.startsWith("+")) { 
-            if (!autenticado) { enviarMensajeObject(Protocolo.ERR_LOGIN); return; }
+            if (!autenticado) { enviarMensajeObject(Protocolo.ERR_REQ_SESION); return; }
             manejarComandoGrupo(rawMensaje);
             return;
         }
         if (rawMensaje.startsWith("$")) {
-            if (!autenticado) { enviarMensajeObject(Protocolo.ERR_LOGIN); return; }
+            if (!autenticado) { enviarMensajeObject(Protocolo.ERR_REQ_SESION); return; }
             manejarMensajeGrupo(rawMensaje);
             return;
         }
