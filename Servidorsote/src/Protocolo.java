@@ -52,19 +52,36 @@ public class Protocolo {
         "Límite de mensajes invitado alcanzado. Por favor inicia sesión."
     );
 
-    public static final Mensaje INFO_LOGIN_EXITOSO = new Mensaje(
-        Mensaje.Tipo.sistema, 
-        EMISOR_SISTEMA, 
-        "Autenticación exitosa. Ahora tienes mensajes ilimitados."
-    );
+    public static Mensaje INFO_LOGIN_EXITOSO(String nombreUsuario) {
+        String texto = """
+            ¡Autenticación Exitosa! Hola.
+            COMANDOS DISPONIBLES (Usuarios Registrados):
+            
+            [Chat Básico]
+            > (Escribir texto)       -> Enviar a todos (Broadcast)
+            > @usuario (mensaje)     -> Mensaje Privado
+            > #usuario               -> Bloquear a un usuario
+            
+            [Grupos - Gestión]
+            > +crear (nombre)        -> Crear nuevo grupo
+            > +unir (nombre)         -> Unirse a grupo existente
+            > +salir (nombre)        -> Salirse de un grupo
+            > +eliminar (nombre)     -> Borrar grupo (Solo dueño)
+            
+            [Grupos - Mensajería]
+            > $(nombre del grupo) (mensaje)    -> Enviar mensaje al grupo
+              (Ejemplo: $amigos Hola a todos)
+            """;
+        return new Mensaje(Mensaje.Tipo.sistema, EMISOR_SISTEMA, texto);
+    }
     
     public static Mensaje bienvenida(String idCliente) {
         String texto = """
-            Bienvenido al Servidor, Cliente: %s
+            Bienvenido al Servidor, Cliente:
             Comandos disponibles (Sin Autenticación):
             1. login <usuario> <contraseña>    -> Iniciar sesión
             2. register <usuario> <contraseña> -> Crear cuenta nueva
-            3. <escribir mensaje>              -> Chat Global (Tienes %d mensajes de prueba)
+            3. <escribir mensaje>              -> Chat Global (Tienes 3 mensajes de prueba)
             """;
 
         return new Mensaje(Mensaje.Tipo.sistema, EMISOR_SISTEMA, texto);
