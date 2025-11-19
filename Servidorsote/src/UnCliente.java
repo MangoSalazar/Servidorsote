@@ -112,6 +112,10 @@ private final Socket socket;
             manejarMensajeGrupo(rawMensaje);
             return;
         }
+        if (rawMensaje.startsWith(Protocolo.CMD_GATO)) {
+            manejarGato(rawMensaje);
+            return;
+        }
         switch (primerCaracter) {
             case Protocolo.PREFIJO_BLOQUEO:
                 manejarBloqueo(rawMensaje);
@@ -297,6 +301,9 @@ private final Socket socket;
 
     private void limpiarConexion() {
         try {
+            if (autenticado) {
+                GatoManager.manejarDesconexion(this.idUsuarioDB);
+            }
             Servidorsote.clientes.remove(idCliente);
             socket.close();
         } catch (IOException ignored) {}
