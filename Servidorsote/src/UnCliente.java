@@ -97,6 +97,10 @@ private final Socket socket;
     }
     private void enrutarMensaje(String rawMensaje) throws IOException {
         if (rawMensaje.isEmpty()) return;
+        if (rawMensaje.equalsIgnoreCase(Protocolo.CMD_LISTAR)) {
+            manejarListarUsuarios();
+            return;
+        }
         String primerCaracter = rawMensaje.substring(0, 1);
         if (rawMensaje.startsWith("+")) { 
             if (!autenticado) { enviarMensajeObject(Protocolo.ERR_LOGIN); return; }

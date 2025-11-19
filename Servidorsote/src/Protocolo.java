@@ -13,6 +13,7 @@ public class Protocolo {
     public static final String PREFIJO_GRUPAL = "%";
     public static final String PREFIJO_BLOQUEO = "#";
     public static final String PREFIJO_DESBLOQUEO = "*";
+    public static final String CMD_LISTAR = "listar";
     
     // Validaciones
     public static final int MIN_LONG_USER = 3;
@@ -60,6 +61,13 @@ public class Protocolo {
         "SERVIDOR", 
         "No se pudo enviar. Existe un bloqueo activo con este usuario."
     );
+    public static Mensaje listaDeUsuarios(String listaNombres) {
+        return new Mensaje(
+            Mensaje.Tipo.sistema, 
+            "SERVIDOR", 
+            "Usuarios Conectados:\n" + listaNombres
+        );
+    }
     public static final Mensaje INFO_LIMITE_ALCANZADO = new Mensaje(
         Mensaje.Tipo.sistema, 
         EMISOR_SISTEMA, 
