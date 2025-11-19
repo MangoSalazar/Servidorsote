@@ -6,13 +6,13 @@ public class Protocolo {
 
     // Comandos de Gestion
     public static final String CMD_LOGIN = "login";
-    public static final String CMD_REGISTER = "register";
     public static final String CMD_REGISTRAR = "registrar"; 
 
     // Prefijos de Mensajeria
     public static final String PREFIJO_PRIVADO = "@";
     public static final String PREFIJO_GRUPAL = "%";
     public static final String PREFIJO_BLOQUEO = "#";
+    public static final String PREFIJO_DESBLOQUEO = "*";
     
     // Validaciones
     public static final int MIN_LONG_USER = 3;
@@ -44,6 +44,14 @@ public class Protocolo {
         Mensaje.Tipo.sistema, 
         EMISOR_SISTEMA, 
         "Ya estas autenticado en el sistema."
+    );
+    
+    public static final Mensaje ERR_AUTO_BLOQUEO = new Mensaje(
+        Mensaje.Tipo.sistema, "SERVIDOR", "No puedes bloquearte a ti mismo."
+    );
+    
+    public static final Mensaje ERR_NO_BLOQUEADO = new Mensaje(
+        Mensaje.Tipo.sistema, "SERVIDOR", "Ese usuario no estaba bloqueado."
     );
 
     public static final Mensaje INFO_LIMITE_ALCANZADO = new Mensaje(
@@ -79,7 +87,7 @@ public class Protocolo {
             Bienvenido al Servidor, Cliente
             Comandos disponibles (Sin Autenticacion):
             1. login <usuario> <contrasena>    -> Iniciar sesion
-            2. register <usuario> <contrasena> -> Crear cuenta nueva
+            2. registrar <usuario> <contrasena> -> Crear cuenta nueva
             3. <escribir mensaje>              -> Chat Global (Tienes 3 mensajes de prueba)
             """;
 

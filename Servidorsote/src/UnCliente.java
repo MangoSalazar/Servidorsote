@@ -15,7 +15,7 @@ private final Socket socket;
     final String idCliente;
     private final UsuarioDAO usuarioDAO = new UsuarioDAO();
     private boolean autenticado = false;
-    private int mensajesEnviados = 0;
+    private int mensajesEnviados = 1;
     private String nombreUsuarioAutenticado = null;
     private int idUsuarioDB = -1;
 
@@ -170,7 +170,7 @@ private final Socket socket;
         if (usuarioDAO.bloquearUsuario(this.idUsuarioDB, idEl)) {
             enviarMensajeObject(Protocolo.notificacion("Has bloqueado a " + nombreABloquear));
         } else {
-            enviarMensajeObject(Protocolo.errorGenerico("Ya estaba bloqueado o error interno."));
+            enviarMensajeObject(Protocolo.errorGenerico("Ya estaba bloqueado."));
         }
     }
     private void manejarPrivado(String rawMensaje) throws IOException {
@@ -207,7 +207,7 @@ private final Socket socket;
 
     private String obtenerDestino(String raw) {
         String[] partes = raw.split(" ");
-        return partes[0].substring(1); // Quita el prefijo (@ o $)
+        return partes[0].substring(1);
     }
     
     private String obtenerContenido(String raw) {
