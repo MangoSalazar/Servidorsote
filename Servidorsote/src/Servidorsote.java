@@ -24,11 +24,11 @@ public class Servidorsote{
                     System.out.println("Nueva people conectandose. ID: " + idCliente);
                     idCliente++;
                 } catch (IOException e) {
-                    System.out.println("Error al aceptar una conexión");
+                    System.out.println("Error al aceptar una conexion");
                 }
             }
         } catch (IOException e) {
-            System.out.println("Error crítico del servidor, verifica los puertos");
+            System.out.println("Error critico del servidor, verifica los puertos");
         }
     }
     
