@@ -197,7 +197,7 @@ private final Socket socket;
             enviarMensajeObject(Protocolo.ERR_NO_BLOQUEADO);
         }
     }
-private void manejarPrivado(String rawMensaje) throws IOException {
+    private void manejarPrivado(String rawMensaje) throws IOException {
         String destinoNombre = obtenerDestino(rawMensaje);
         UnCliente clienteDestino = buscarClientePorNombre(destinoNombre);
         if (clienteDestino == null) {
