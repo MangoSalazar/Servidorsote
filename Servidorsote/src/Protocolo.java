@@ -25,7 +25,7 @@ public class Protocolo {
     public static final Mensaje ERR_LOGIN = new Mensaje(
         Mensaje.Tipo.sistema, 
         EMISOR_SISTEMA, 
-        "Usuario o contraseña incorrectos."
+        "Usuario o contrasena incorrectos."
     );
 
     public static final Mensaje ERR_REGISTRO = new Mensaje(
@@ -65,7 +65,7 @@ public class Protocolo {
             > +crear (nombre)        -> Crear nuevo grupo
             > +unir (nombre)         -> Unirse a grupo existente
             > +salir (nombre)        -> Salirse de un grupo
-            > +eliminar (nombre)     -> Borrar grupo (Solo dueño)
+            > +eliminar (nombre)     -> Borrar grupo (Solo dueno)
             
             [Grupos - Mensajeria]
             > $(nombre del grupo) (mensaje)    -> Enviar mensaje al grupo
@@ -78,8 +78,8 @@ public class Protocolo {
         String texto = """
             Bienvenido al Servidor, Cliente
             Comandos disponibles (Sin Autenticacion):
-            1. login <usuario> <contraseña>    -> Iniciar sesion
-            2. register <usuario> <contraseña> -> Crear cuenta nueva
+            1. login <usuario> <contrasena>    -> Iniciar sesion
+            2. register <usuario> <contrasena> -> Crear cuenta nueva
             3. <escribir mensaje>              -> Chat Global (Tienes 3 mensajes de prueba)
             """;
 
