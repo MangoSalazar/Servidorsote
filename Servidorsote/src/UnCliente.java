@@ -56,6 +56,10 @@ private final Socket socket;
             enrutarMensaje(rawMensaje);
         }
     }
+    private boolean esComandoSesion(String mensaje) {
+        return mensaje.startsWith(Protocolo.CMD_LOGIN + " ") || 
+               mensaje.startsWith(Protocolo.CMD_REGISTRAR + " ");
+    }
     private void procesarSesion(String mensaje) throws IOException {
         if (autenticado) {
             enviarMensajeObject(Protocolo.INFO_YA_AUTENTICADO);
