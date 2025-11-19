@@ -56,6 +56,26 @@ private final Socket socket;
             enrutarMensaje(rawMensaje);
         }
     }
+    private void manejarComandoGrupo(String rawMensaje) throws IOException {
+        String[] partes = rawMensaje.split(" ", 2);
+        String comando = partes[0];
+        String argumento = (partes.length > 1) ? partes[1] : "";
+        
+        if (argumento.isEmpty()) {
+            enviarMensajeObject(Protocolo.errorGenerico("El comando requiere un nombre de grupo."));
+            return;
+        }
+
+        String respuesta = switch (comando) {
+            case "+crear" -> GrupoManager.crearGrupo(this.idUsuarioDB, argumento);
+            case "+unir" -> GrupoManager.unirGrupo(this.idUsuarioDB, argumento);
+            case "+salir" -> GrupoManager.salirGrupo(this.idUsuarioDB, argumento);
+            case "+eliminar" -> GrupoManager.eliminarGrupo(this.idUsuarioDB, argumento);
+            default -> "Comando desconocido.";
+        };
+        
+        enviarMensajeObject(Protocolo.notificacion(respuesta));
+    }
     private void manejarMensajeGrupo(String rawMensaje) throws IOException {
         String nombreGrupo = obtenerDestino(rawMensaje).replace("$", ""); 
         String contenido = obtenerContenido(rawMensaje);
