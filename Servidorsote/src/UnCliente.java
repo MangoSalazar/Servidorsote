@@ -56,6 +56,17 @@ private final Socket socket;
             enrutarMensaje(rawMensaje);
         }
     }
+    private void manejarMensajeGrupo(String rawMensaje) throws IOException {
+        String nombreGrupo = obtenerDestino(rawMensaje).replace("$", ""); 
+        String contenido = obtenerContenido(rawMensaje);
+
+        if (contenido.isEmpty()) {
+            enviarMensajeObject(Protocolo.errorGenerico("Mensaje vacío. Usa $grupo (mensaje)"));
+            return;
+        }
+        GrupoManager.enviarMensajeGrupo(this.idUsuarioDB, nombreGrupo, contenido);
+        enviarMensajeObject(Protocolo.notificacion("[Tú -> Grupo " + nombreGrupo + "]: " + contenido));
+    }
     private void manejarBloqueo(String rawMensaje) throws IOException {
         if (!autenticado) {
             enviarMensajeObject(Protocolo.ERR_LOGIN);
