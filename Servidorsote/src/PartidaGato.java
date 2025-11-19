@@ -35,4 +35,13 @@ public class PartidaGato {
         if (check(tablero[0][2], tablero[1][1], tablero[2][0])) return true;
         return false;
     }
+    public boolean esEmpate() {
+        for (char[] fila : tablero) for (char c : fila) 
+            if (c != 'X' && c != 'O') return false;
+        return true;
+    }
+
+    private boolean check(char a, char b, char c) {
+        return a == b && b == c;
+    }
 }
