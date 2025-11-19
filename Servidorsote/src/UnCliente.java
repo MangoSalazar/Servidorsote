@@ -9,15 +9,16 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 public class UnCliente implements Runnable {
-    private final Socket socket;
+private final Socket socket;
     private final DataOutputStream salida;
     private final DataInputStream entrada;
     final String idCliente;
-    
-    private final UsuarioDAO usuarioDAO = new UsuarioDAO(); // Instancia del DAO
+    private final UsuarioDAO usuarioDAO = new UsuarioDAO();
     private boolean autenticado = false;
+    private int mensajesEnviados = 0;
     private String nombreUsuarioAutenticado = null;
-    
+    private int idUsuarioDB = -1;
+
     public UnCliente(Socket s, String idCliente) throws IOException {
         this.socket = s;
         this.idCliente = idCliente;
