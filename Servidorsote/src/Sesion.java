@@ -12,7 +12,19 @@ public class Sesion {
             procesarSolicitud(tipoDeInicio);
     }
 
+    private boolean validarFormatoNombre(String nombre) {
+        return nombre.matches(Protocolo.PATRON_NOMBRE);
+    }
 
+    private boolean esPalabraReservada(String nombre) {
+        return Protocolo.NOMBRES_PROHIBIDOS.contains(nombre.toLowerCase());
+    }
+
+    private boolean validarLongitud(String nombre, String contraseña) {
+        boolean nombreOk = nombre.length() >= Protocolo.MIN_LONG_USER && nombre.length() <= Protocolo.MAX_LONG_USER;
+        boolean passOk = contraseña.length() >= Protocolo.MIN_LONG_PASS && contraseña.length() <= Protocolo.MAX_LONG_PASS;
+        return nombreOk && passOk;
+    }
     private void procesarSolicitud(String tipoDeInicio) throws Exception {
         if (tipoDeInicio.equals(Protocolo.CMD_LOGIN)) {
             if (!usuarioDAO.validarCredenciales(nombre, contrasena)) {
