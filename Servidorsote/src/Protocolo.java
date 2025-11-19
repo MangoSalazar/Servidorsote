@@ -1,4 +1,5 @@
 
+import java.util.Set;
 public class Protocolo {
     // Configuracion del Servidor
     public static final int PUERTO = 8080;
@@ -19,6 +20,10 @@ public class Protocolo {
     // Validaciones
     public static final int MIN_LONG_USER = 3;
     public static final int MAX_LONG_USER = 15;
+    public static final String PATRON_NOMBRE = "^[a-zA-Z0-9]+$";
+    public static final Set<String> NOMBRES_PROHIBIDOS = Set.of(
+        "login", "register", "registrar", "listar", "gato", "admin", "servidor", "server"
+    );
     public static final int MIN_LONG_PASS = 3;
     public static final int MAX_LONG_PASS = 10;
     
