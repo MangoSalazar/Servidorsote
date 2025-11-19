@@ -62,6 +62,22 @@ public class UsuarioDAO {
             return false;
         }
     }
+    public boolean desbloquearUsuario(int idUsuario, int idBloqueado) {
+        String sql = "DELETE FROM bloqueos WHERE id_usuario = ? AND id_bloqueado = ?";
+        try (Connection conn = ConexionBD.conectar(); 
+             PreparedStatement ps = conn.prepareStatement(sql)) {
+            
+            ps.setInt(1, idUsuario);
+            ps.setInt(2, idBloqueado);
+            
+            int filasAfectadas = ps.executeUpdate();
+            return filasAfectadas > 0; // Retorna true si borró algo
+            
+        } catch (SQLException e) {
+            System.out.println("No se pudo conectar la base de datos");
+            return false;
+        }
+    }
     public String obtenerNombrePorId(int id) {
     String sql = "SELECT nombre_usuario FROM usuarios WHERE id = ?";
     try (Connection conn = ConexionBD.conectar(); 
