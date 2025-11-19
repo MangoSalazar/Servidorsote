@@ -14,18 +14,18 @@ public class GatoManager {
         if (validarInvitacion(idEmisor, idDestino) != null) return validarInvitacion(idEmisor, idDestino);
 
         invitaciones.computeIfAbsent(idDestino, k -> new ArrayList<>()).add(idEmisor);
-        notificarUsuario(idDestino, Protocolo.notificacion("¡" + dao.obtenerNombrePorId(idEmisor) + " te invitó a jugar Gato! Usa: /gato aceptar " + dao.obtenerNombrePorId(idEmisor)));
-        return "Invitación enviada a " + nombreDestino;
+        notificarUsuario(idDestino, Protocolo.notificacion("¡" + dao.obtenerNombrePorId(idEmisor) + " te invito a jugar Gato! Usa: /gato aceptar " + dao.obtenerNombrePorId(idEmisor)));
+        return "Invitacion enviada a " + nombreDestino;
     }
     public static String aceptar(int idAcepta, String nombreInvito) {
         int idInvito = dao.obtenerIdPorNombre(nombreInvito);
-        if (!tieneInvitacion(idAcepta, idInvito)) return "No tienes invitación de este usuario.";
+        if (!tieneInvitacion(idAcepta, idInvito)) return "No tienes invitacion de este usuario.";
         String key = generarKey(idAcepta, idInvito);
         PartidaGato partida = new PartidaGato(idInvito, idAcepta);
         partidasActivas.put(key, partida);
         
         invitaciones.get(idAcepta).remove((Integer) idInvito);
-        notificarAmbos(partida, "¡Partida Iniciada! " + nombreInvito + " (X) vs Tú (O).\n" + partida.dibujarTablero());
+        notificarAmbos(partida, "¡Partida Iniciada! " + nombreInvito + " (X) vs Tu (O).\n" + partida.dibujarTablero());
         return "Partida aceptada.";
     }
 
@@ -33,7 +33,7 @@ public class GatoManager {
         try {
             int idOponente = dao.obtenerIdPorNombre(nombreOponente);
             PartidaGato partida = partidasActivas.get(generarKey(idJugador, idOponente));
-            if (partida == null) return "No estás jugando contra " + nombreOponente;
+            if (partida == null) return "No estas jugando contra " + nombreOponente;
 
             String estado = partida.realizarJugada(idJugador, Integer.parseInt(casillaStr));
             verificarEstadoPartida(partida, idJugador, idOponente, estado);
@@ -56,7 +56,7 @@ public class GatoManager {
         partidasActivas.forEach((key, partida) -> {
             if (partida.idJugadorX == idDesconectado || partida.idJugadorO == idDesconectado) {
                 int idGanador = (partida.idJugadorX == idDesconectado) ? partida.idJugadorO : partida.idJugadorX;
-                finalizarPartida(idGanador, idDesconectado, "Tu oponente se desconectó. ¡Ganaste!", null);
+                finalizarPartida(idGanador, idDesconectado, "Tu oponente se desconecto. ¡Ganaste!", null);
             }
         });
         invitaciones.remove(idDesconectado);
@@ -78,7 +78,7 @@ public class GatoManager {
         if (idEmisor == idDestino) return "No puedes jugar contra ti mismo.";
         if (dao.hayBloqueoEntre(idEmisor, idDestino)) return "Bloqueo activo con este usuario.";
         if (buscarClienteOnline(idDestino) == null) return "Usuario no conectado.";
-        if (partidasActivas.containsKey(generarKey(idEmisor, idDestino))) return "Ya están jugando.";
+        if (partidasActivas.containsKey(generarKey(idEmisor, idDestino))) return "Ya estan jugando.";
         return null;
     }
     private static String generarKey(int id1, int id2) {
