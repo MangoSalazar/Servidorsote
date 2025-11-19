@@ -58,8 +58,15 @@ public class ConexionBD {
             FOREIGN KEY (id_usuario_destino) REFERENCES usuarios(id) ON DELETE CASCADE
         );
     """;
-
-    // --- MÉTODOS ---
+    
+    private static final String TBL_ESTADISTICAS = """
+        CREATE TABLE IF NOT EXISTS estadisticas (
+            id_usuario INTEGER PRIMARY KEY,
+            victorias INTEGER DEFAULT 0,
+            derrotas INTEGER DEFAULT 0,
+            FOREIGN KEY (id_usuario) REFERENCES usuarios(id) ON DELETE CASCADE
+        );
+    """;
 
     public static Connection conectar() {
         try {
