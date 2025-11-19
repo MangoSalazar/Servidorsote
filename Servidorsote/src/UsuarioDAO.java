@@ -27,4 +27,18 @@ public class UsuarioDAO {
             return false;
         }
     }
+    public boolean registrarUsuario(String nombre, String contrasena) {
+        if (existeUsuario(nombre)) return false;
+        
+        String sql = "INSERT INTO usuarios (nombre_usuario, contrasena) VALUES (?, ?)";
+        try (Connection conn = ConexionBD.conectar(); PreparedStatement ps = conn.prepareStatement(sql)) {
+            ps.setString(1, nombre);
+            ps.setString(2, contrasena);
+            ps.executeUpdate();
+            return true;
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return false;
+        }
+    }
 }
