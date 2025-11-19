@@ -89,6 +89,7 @@ public class ConexionBD {
             stmt.execute(TBL_GRUPOS);
             stmt.execute(TBL_GRUPOS_MIEMBROS);
             stmt.execute(TBL_MSJ_PENDIENTES);
+            stmt.execute(TBL_ESTADISTICAS);
 
             System.out.println("Base de datos verificada y lista.");
             
