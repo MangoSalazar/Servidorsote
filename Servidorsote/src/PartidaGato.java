@@ -44,4 +44,14 @@ public class PartidaGato {
     private boolean check(char a, char b, char c) {
         return a == b && b == c;
     }
+    public String dibujarTablero() {
+        return String.format("\n %c | %c | %c \n---+---+---\n %c | %c | %c \n---+---+---\n %c | %c | %c \n",
+            tablero[0][0], tablero[0][1], tablero[0][2],
+            tablero[1][0], tablero[1][1], tablero[1][2],
+            tablero[2][0], tablero[2][1], tablero[2][2]);
+    }
+    
+    public int getOponente(int idYo) {
+        return (idYo == idJugadorX) ? idJugadorO : idJugadorX;
+    }
 }
