@@ -134,6 +134,33 @@ private final Socket socket;
                 break;
         }
     }
+    private void manejarGato(String rawMensaje) throws IOException {
+        if (!autenticado) { enviarMensajeObject(Protocolo.ERR_REQ_SESION); return; }
+
+        String[] partes = rawMensaje.split(" ");
+        if (partes.length < 2) { enviarMensajeObject(Protocolo.notificacion("Uso: /gato [invitar|aceptar|jugar] [args]")); return; }
+
+        String accion = partes[1];
+        String respuesta = "";
+
+        switch (accion) {
+            case "invitar":
+                if (partes.length < 3) respuesta = "Falta el nombre del usuario.";
+                else respuesta = GatoManager.invitar(this.idUsuarioDB, partes[2]);
+                break;
+            case "aceptar":
+                if (partes.length < 3) respuesta = "Falta el nombre de quien te invitó.";
+                else respuesta = GatoManager.aceptar(this.idUsuarioDB, partes[2]);
+                break;
+            case "jugar": // /gato jugar Oponente 5
+                if (partes.length < 4) respuesta = "Uso: /gato jugar [Oponente] [1-9]";
+                else respuesta = GatoManager.jugar(this.idUsuarioDB, partes[2], partes[3]);
+                break;
+            default:
+                respuesta = "Acción desconocida.";
+        }
+        enviarMensajeObject(Protocolo.notificacion(respuesta));
+    }
     private void manejarListarUsuarios() throws IOException {
         if (!autenticado) {
             enviarMensajeObject(Protocolo.ERR_REQ_SESION);
