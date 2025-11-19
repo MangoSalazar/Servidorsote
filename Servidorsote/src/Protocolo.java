@@ -59,12 +59,17 @@ public class Protocolo {
     );
     
     public static Mensaje bienvenida(String idCliente) {
-        return new Mensaje(
-            Mensaje.Tipo.sistema, 
-            EMISOR_SISTEMA, 
-            "Bienvenido cliente: " + idCliente + ". Usa 'login' o 'register'. 1. login <usuario> <contraseña>    -> Iniciar sesión" + "2. register <usuario> <contraseña> -> Crear cuenta nueva" + "3. <escribir mensaje>              -> Chat Global (Tienes %d mensajes de prueba)"
-        );
+        String texto = """
+            Bienvenido al Servidor, Cliente: %s
+            Comandos disponibles (Sin Autenticación):
+            1. login <usuario> <contraseña>    -> Iniciar sesión
+            2. register <usuario> <contraseña> -> Crear cuenta nueva
+            3. <escribir mensaje>              -> Chat Global (Tienes %d mensajes de prueba)
+            """;
+
+        return new Mensaje(Mensaje.Tipo.sistema, EMISOR_SISTEMA, texto);
     }
+
     public static Mensaje notificacion(String texto) {
         return new Mensaje(Mensaje.Tipo.sistema, EMISOR_SISTEMA, texto);
     }
