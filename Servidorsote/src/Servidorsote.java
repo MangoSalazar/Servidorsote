@@ -8,6 +8,7 @@ public class Servidorsote{
     static HashMap<String,UnCliente> clientes = new HashMap<String,UnCliente>();
     
     public static void main (String[] args) throws IOException{
+        
         System.out.println("--- Iniciando Servidor ---");
         ConexionBD.inicializarBD();
         try (ServerSocket servidorSocket = new ServerSocket(Protocolo.PUERTO)) {
