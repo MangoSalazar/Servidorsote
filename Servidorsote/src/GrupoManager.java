@@ -39,4 +39,32 @@ public class GrupoManager {
             return "Error (probablemente el nombre ya existe): " + e.getMessage();
         }
     }
+    public static String unirGrupo(int idUsuario, String nombreGrupo) {
+        int idGrupo = obtenerIdGrupo(nombreGrupo);
+        if (idGrupo == -1) return "El grupo no existe.";
+
+        String sql = "INSERT INTO grupos_miembros (id_grupo, id_usuario) VALUES (?, ?)";
+        try (Connection conn = ConexionBD.conectar(); PreparedStatement ps = conn.prepareStatement(sql)) {
+            ps.setInt(1, idGrupo);
+            ps.setInt(2, idUsuario);
+            ps.executeUpdate();
+            return "Te has unido al grupo " + nombreGrupo;
+        } catch (SQLException e) {
+            return "Ya eres miembro de este grupo.";
+        }
+    }
+    public static String salirGrupo(int idUsuario, String nombreGrupo) {
+        int idGrupo = obtenerIdGrupo(nombreGrupo);
+        if (idGrupo == -1) return "El grupo no existe.";
+
+        String sql = "DELETE FROM grupos_miembros WHERE id_grupo = ? AND id_usuario = ?";
+        try (Connection conn = ConexionBD.conectar(); PreparedStatement ps = conn.prepareStatement(sql)) {
+            ps.setInt(1, idGrupo);
+            ps.setInt(2, idUsuario);
+            int filas = ps.executeUpdate();
+            return (filas > 0) ? "Saliste del grupo " + nombreGrupo : "No eras miembro del grupo.";
+        } catch (SQLException e) {
+            return "Error al salir: " + e.getMessage();
+        }
+    }
 }
