@@ -112,6 +112,9 @@ private final Socket socket;
             case Protocolo.PREFIJO_BLOQUEO:
                 manejarBloqueo(rawMensaje);
                 break;
+            case Protocolo.PREFIJO_DESBLOQUEO:
+                manejarDesbloqueo(rawMensaje);
+                break;
             case Protocolo.PREFIJO_PRIVADO:
                 manejarPrivado(rawMensaje);
                 break;
@@ -161,16 +164,37 @@ private final Socket socket;
         }
         String nombreABloquear = rawMensaje.substring(1).trim();
         int idEl = usuarioDAO.obtenerIdPorNombre(nombreABloquear);
+        if (idEl == -1) {
+            enviarMensajeObject(Protocolo.errorGenerico("Usuario no encontrado."));
+            return;
+        }
+        if (idEl == this.idUsuarioDB) {
+            enviarMensajeObject(Protocolo.ERR_AUTO_BLOQUEO);
+            return;
+        }
+        if (usuarioDAO.bloquearUsuario(this.idUsuarioDB, idEl)) {
+            enviarMensajeObject(Protocolo.notificacion("Has bloqueado a " + nombreABloquear));
+        } else {
+            enviarMensajeObject(Protocolo.errorGenerico("Ya estaba bloqueado."));
+        }
+    }
+    private void manejarDesbloqueo(String rawMensaje) throws IOException {
+        if (!autenticado) {
+            enviarMensajeObject(Protocolo.ERR_REQ_SESION);
+            return;
+        }
+        String nombreADesbloquear = rawMensaje.substring(1).trim();
+        int idEl = usuarioDAO.obtenerIdPorNombre(nombreADesbloquear);
 
         if (idEl == -1) {
             enviarMensajeObject(Protocolo.errorGenerico("Usuario no encontrado."));
             return;
         }
 
-        if (usuarioDAO.bloquearUsuario(this.idUsuarioDB, idEl)) {
-            enviarMensajeObject(Protocolo.notificacion("Has bloqueado a " + nombreABloquear));
+        if (usuarioDAO.desbloquearUsuario(this.idUsuarioDB, idEl)) {
+            enviarMensajeObject(Protocolo.notificacion("Has desbloqueado a " + nombreADesbloquear));
         } else {
-            enviarMensajeObject(Protocolo.errorGenerico("Ya estaba bloqueado."));
+            enviarMensajeObject(Protocolo.ERR_NO_BLOQUEADO);
         }
     }
     private void manejarPrivado(String rawMensaje) throws IOException {

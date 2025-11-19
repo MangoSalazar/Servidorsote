@@ -46,10 +46,12 @@ public class Protocolo {
         "Ya estas autenticado en el sistema."
     );
     
-    public static final Mensaje ERR_AUTO_BLOQUEO = new Mensaje(
+    public static final Mensaje ERR_REQ_SESION = new Mensaje(
+        Mensaje.Tipo.sistema, "SERVIDOR", "Necesitas iniciar sesion."
+    );
+     public static final Mensaje ERR_AUTO_BLOQUEO = new Mensaje(
         Mensaje.Tipo.sistema, "SERVIDOR", "No puedes bloquearte a ti mismo."
     );
-    
     public static final Mensaje ERR_NO_BLOQUEADO = new Mensaje(
         Mensaje.Tipo.sistema, "SERVIDOR", "Ese usuario no estaba bloqueado."
     );
