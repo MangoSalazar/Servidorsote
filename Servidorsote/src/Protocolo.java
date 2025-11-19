@@ -89,6 +89,10 @@ public class Protocolo {
             > +unir (nombre)         -> Unirse a grupo existente
             > +salir (nombre)        -> Salirse de un grupo
             > +eliminar (nombre)     -> Borrar grupo (Solo dueno)
+                       
+            // > /gato invitar (usuario)  -> Invitar a jugar
+            // > /gato aceptar (usuario)  -> Aceptar reto
+            // > /gato jugar (usuario) (1-9) -> Mover ficha
             
             [Grupos - Mensajeria]
             > $(nombre del grupo) (mensaje)    -> Enviar mensaje al grupo
