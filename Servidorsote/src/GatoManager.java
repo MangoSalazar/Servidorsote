@@ -16,7 +16,14 @@ public class GatoManager {
         notificarUsuario(idDestino, Protocolo.notificacion("¡" + dao.obtenerNombrePorId(idEmisor) + " te invitó a jugar Gato! Usa: /gato aceptar " + dao.obtenerNombrePorId(idEmisor)));
         return "Invitación enviada a " + nombreDestino;
     }
+    private static boolean tieneInvitacion(int idAcepta, int idInvito) {
+        List<Integer> lista = invitaciones.get(idAcepta);
+        return lista != null && lista.contains(idInvito);
+    }
 
+    private static String generarKey(int id1, int id2) {
+        return Math.min(id1, id2) + "-" + Math.max(id1, id2);
+    }
 
     // Método duplicado por necesidad de acceso estático, idealmente en una clase Utils o Servidorsote
     private static void notificarUsuario(int idUsuario, Mensaje msg) {
