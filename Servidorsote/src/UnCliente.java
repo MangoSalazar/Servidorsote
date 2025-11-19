@@ -141,7 +141,7 @@ private final Socket socket;
             if (cliente.autenticado && cliente.nombreUsuarioAutenticado != null) {
                 lista.append("• ").append(cliente.nombreUsuarioAutenticado);
                 if (cliente.idCliente.equals(this.idCliente)) {
-                    lista.append(" (Tú)");
+                    lista.append(" (Tu)");
                 }
                 lista.append("\n");
                 contador++;
@@ -181,7 +181,7 @@ private final Socket socket;
             return;
         }
         GrupoManager.enviarMensajeGrupo(this.idUsuarioDB, nombreGrupo, contenido);
-        enviarMensajeObject(Protocolo.notificacion("[Tú -> Grupo " + nombreGrupo + "]: " + contenido));
+        enviarMensajeObject(Protocolo.notificacion("[Tu -> Grupo " + nombreGrupo + "]: " + contenido));
     }
     private void manejarBloqueo(String rawMensaje) throws IOException {
         if (!autenticado) {

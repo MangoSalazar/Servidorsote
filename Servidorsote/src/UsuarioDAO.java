@@ -92,9 +92,18 @@ public class UsuarioDAO {
             return ps.executeQuery().next();
             
         } catch (SQLException e) {
-            e.printStackTrace();
+            System.out.println("No se pudo conectar la base de datos");
             return false;
         }
+    }
+    public String obtenerStats(int idUsuario) {
+        String sql = "SELECT victorias, derrotas FROM estadisticas WHERE id_usuario = ?";
+        try (Connection conn = ConexionBD.conectar(); PreparedStatement ps = conn.prepareStatement(sql)) {
+            ps.setInt(1, idUsuario);
+            ResultSet rs = ps.executeQuery();
+            if (rs.next()) return " (W: " + rs.getInt("victorias") + " / L: " + rs.getInt("derrotas") + ")";
+        } catch (SQLException e) { return "No se pudo conectar la base de datos"; }
+        return " (W: 0 / L: 0)";
     }
     public String obtenerNombrePorId(int id) {
     String sql = "SELECT nombre_usuario FROM usuarios WHERE id = ?";
