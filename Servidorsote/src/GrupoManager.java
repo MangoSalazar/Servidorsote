@@ -81,19 +81,14 @@ public class GrupoManager {
     public static void enviarMensajeGrupo(int idEmisor, String nombreGrupo, String contenido) {
         int idGrupo = obtenerIdGrupo(nombreGrupo);
         if (idGrupo == -1) return;
-
-        String nombreEmisor = Sesion.obtenerNombrePorId(idEmisor);
+        UsuarioDAO usuarioDAO = new UsuarioDAO();
+        String nombreEmisor = usuarioDAO.obtenerNombrePorId(idEmisor);
+        if (nombreEmisor == null) return;
         List<Integer> miembros = obtenerMiembros(idGrupo);
-
         String mensajeFormateado = "[Grupo " + nombreGrupo + "] " + nombreEmisor + ": " + contenido;
-        Mensaje msgObj = new Mensaje(Mensaje.Tipo.multi, nombreEmisor, nombreGrupo, contenido); 
-
-
         for (int idMiembro : miembros) {
-            if (idMiembro == idEmisor) continue;
-
+            if (idMiembro == idEmisor) continue; 
             UnCliente clienteConectado = buscarClienteOnline(idMiembro);
-
             if (clienteConectado != null) {
                 try {
                     clienteConectado.enviarMensajeObject(Protocolo.notificacion(mensajeFormateado));
