@@ -52,4 +52,16 @@ public class UsuarioDAO {
         }
         return -1;
     }
+    public boolean bloquearUsuario(int idUsuario, int idBloqueado) {
+        String sql = "INSERT INTO bloqueos (id_usuario, id_bloqueado) VALUES (?, ?)";
+        try (Connection conn = ConexionBD.conectar(); PreparedStatement ps = conn.prepareStatement(sql)) {
+            ps.setInt(1, idUsuario);
+            ps.setInt(2, idBloqueado);
+            ps.executeUpdate();
+            return true;
+        } catch (SQLException e) {
+            // Probablemente ya estaba bloqueado (constraint unique)
+            return false;
+        }
+    }
 }
