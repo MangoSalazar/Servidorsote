@@ -78,6 +78,24 @@ public class UsuarioDAO {
             return false;
         }
     }
+    public boolean hayBloqueoEntre(int idUsuario1, int idUsuario2) {
+        String sql = "SELECT 1 FROM bloqueos WHERE (id_usuario = ? AND id_bloqueado = ?) OR (id_usuario = ? AND id_bloqueado = ?)";
+        
+        try (Connection conn = ConexionBD.conectar(); 
+             PreparedStatement ps = conn.prepareStatement(sql)) {
+            
+            ps.setInt(1, idUsuario1);
+            ps.setInt(2, idUsuario2);
+            ps.setInt(3, idUsuario2);
+            ps.setInt(4, idUsuario1);
+            
+            return ps.executeQuery().next();
+            
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return false;
+        }
+    }
     public String obtenerNombrePorId(int id) {
     String sql = "SELECT nombre_usuario FROM usuarios WHERE id = ?";
     try (Connection conn = ConexionBD.conectar(); 

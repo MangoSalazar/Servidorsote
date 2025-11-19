@@ -55,7 +55,11 @@ public class Protocolo {
     public static final Mensaje ERR_NO_BLOQUEADO = new Mensaje(
         Mensaje.Tipo.sistema, "SERVIDOR", "Ese usuario no estaba bloqueado."
     );
-
+    public static final Mensaje ERR_BLOQUEO_ACTIVO = new Mensaje(
+        Mensaje.Tipo.sistema, 
+        "SERVIDOR", 
+        "No se pudo enviar. Existe un bloqueo activo con este usuario."
+    );
     public static final Mensaje INFO_LIMITE_ALCANZADO = new Mensaje(
         Mensaje.Tipo.sistema, 
         EMISOR_SISTEMA, 
