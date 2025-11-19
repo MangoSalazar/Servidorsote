@@ -38,7 +38,7 @@ public class GatoManager {
             String estado = partida.realizarJugada(idJugador, Integer.parseInt(casillaStr));
             verificarEstadoPartida(partida, idJugador, idOponente, estado);
             return "Jugada realizada.";
-        } catch (Exception e) { return "Error: " + e.getMessage(); }
+        } catch (Exception e) { return "Error: No se pudo realizar la jugada. Verifica el número de casilla e intenta nuevamente."; }
     }
     private static void verificarEstadoPartida(PartidaGato partida, int idJugador, int idOponente, String tablero) {
         if (partida.hayGanador()) {
@@ -88,7 +88,7 @@ public class GatoManager {
     private static void notificarUsuario(int idUsuario, Mensaje msg) {
         for (UnCliente c : Servidorsote.clientes.values()) {
             if (c.getIdUsuarioDB() == idUsuario) {
-                try { c.enviarMensajeObject(msg); } catch (Exception e) {}
+                try { c.enviarMensajeObject(msg); } catch (Exception e) {System.out.println("No fue posible enviar el mensaje. Intente más tarde.");}
             }
         }
     }
