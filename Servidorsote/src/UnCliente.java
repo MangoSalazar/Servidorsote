@@ -56,7 +56,25 @@ private final Socket socket;
             enrutarMensaje(rawMensaje);
         }
     }
+    private void manejarBloqueo(String rawMensaje) throws IOException {
+        if (!autenticado) {
+            enviarMensajeObject(Protocolo.ERR_LOGIN);
+            return;
+        }
+        String nombreABloquear = rawMensaje.substring(1).trim();
+        int idEl = usuarioDAO.obtenerIdPorNombre(nombreABloquear);
 
+        if (idEl == -1) {
+            enviarMensajeObject(Protocolo.errorGenerico("Usuario no encontrado."));
+            return;
+        }
+
+        if (usuarioDAO.bloquearUsuario(this.idUsuarioDB, idEl)) {
+            enviarMensajeObject(Protocolo.notificacion("Has bloqueado a " + nombreABloquear));
+        } else {
+            enviarMensajeObject(Protocolo.errorGenerico("Ya estaba bloqueado o error interno."));
+        }
+    }
     private void manejarPrivado(String rawMensaje) throws IOException {
         String destino = obtenerDestino(rawMensaje);
         if (!clienteEstaConectado(destino)) {
