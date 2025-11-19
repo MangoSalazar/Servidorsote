@@ -117,8 +117,6 @@ public class GrupoManager {
                 ResultSet rs = ps.executeQuery();
                 while (rs.next()) {
                     mensajes.add(rs.getString("mensaje_formateado"));
-                    
-                    // 2. Borrar mensaje leído (dentro del mismo loop o batch)
                     try (PreparedStatement psDel = conn.prepareStatement(sqlDelete)) {
                         psDel.setInt(1, rs.getInt("id"));
                         psDel.executeUpdate();

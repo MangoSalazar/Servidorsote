@@ -62,4 +62,20 @@ public class UsuarioDAO {
             return false;
         }
     }
+    public String obtenerNombrePorId(int id) {
+    String sql = "SELECT nombre_usuario FROM usuarios WHERE id = ?";
+    try (Connection conn = ConexionBD.conectar(); 
+         PreparedStatement ps = conn.prepareStatement(sql)) {
+        
+        ps.setInt(1, id);
+        ResultSet rs = ps.executeQuery();
+        
+        if (rs.next()) {
+            return rs.getString("nombre_usuario");
+        }
+    } catch (SQLException e) {
+        e.printStackTrace();
+    }
+    return null;
+}
 }
