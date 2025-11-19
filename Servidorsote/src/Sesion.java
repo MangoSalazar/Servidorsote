@@ -4,7 +4,7 @@ public class Sesion {
     String nombre;
     String contrasena;
     public Sesion(String tipoDeInicio, String nombre, String contrasena) throws Exception {
-        if (!validarFormatoNombre(nombre)) throw new Exception("Nombre inválido: Solo letras y números.");
+        if (!validarFormatoNombre(nombre)) throw new Exception("Nombre invalido: Solo letras y numeros.");
         if (esPalabraReservada(nombre)) throw new Exception("Ese nombre está reservado por el sistema.");
         if (!validarLongitud(nombre, contrasena)) throw new Exception("Longitud incorrecta (User: 3-15, Pass: 3-10).");
             this.nombre = nombre;
