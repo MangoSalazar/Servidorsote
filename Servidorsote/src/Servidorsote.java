@@ -9,7 +9,6 @@ public class Servidorsote{
     
     public static void main (String[] args) throws IOException{
         ConexionBD.inicializarBD();
-        
         ServerSocket servidorSocker = new ServerSocket (8080);
         int idCliente = 0;
             while (true) {            
