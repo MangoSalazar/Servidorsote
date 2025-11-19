@@ -67,4 +67,15 @@ public class GrupoManager {
             return "Error al salir: " + e.getMessage();
         }
     }
+    public static String eliminarGrupo(int idUsuario, String nombreGrupo) {
+        String sql = "DELETE FROM grupos WHERE nombre_grupo = ? AND id_creador = ?";
+        try (Connection conn = ConexionBD.conectar(); PreparedStatement ps = conn.prepareStatement(sql)) {
+            ps.setString(1, nombreGrupo);
+            ps.setInt(2, idUsuario);
+            int filas = ps.executeUpdate();
+            return (filas > 0) ? "Grupo eliminado." : "No eres el dueño o el grupo no existe.";
+        } catch (SQLException e) {
+            return "Error al eliminar: " + e.getMessage();
+        }
+    }
 }
