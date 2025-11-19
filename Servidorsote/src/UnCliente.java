@@ -25,22 +25,18 @@ public class UnCliente implements Runnable {
         this.entrada = new DataInputStream(s.getInputStream());
     }
     @Override
-    public void run() {
+public void run() {
         try {
-            salida.writeUTF("Bienvenido cliente: " + idCliente
-                    + "\nPuedes enviar 3 mensajes antes de registrarte."
-                    + "\nPara registrarte o iniciar sesión usa: 'register nombre contraseña' o 'login nombre contraseña'\n");
-            entradasDeCliente();
+            enviarMensajeObject(Protocolo.bienvenida(idCliente));
+            
+            cicloPrincipal();
+            
         } catch (IOException e) {
             System.out.println("Cliente " + idCliente + " desconectado.");
         } catch (Exception ex) {
             Logger.getLogger(UnCliente.class.getName()).log(Level.SEVERE, null, ex);
         } finally {
-            try {
-                Servidorsote.clientes.remove(idCliente);
-                socket.close();
-            } catch (IOException ignored) {
-            }
+            limpiarConexion();
         }
     }
     private void entradasDeCliente() throws IOException {
