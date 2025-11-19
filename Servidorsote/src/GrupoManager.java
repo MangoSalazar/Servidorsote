@@ -130,4 +130,13 @@ public class GrupoManager {
         }
         return mensajes;
     }
+    private static int obtenerIdGrupo(String nombre) {
+        try (Connection conn = ConexionBD.conectar(); 
+             PreparedStatement ps = conn.prepareStatement("SELECT id FROM grupos WHERE nombre_grupo = ?")) {
+            ps.setString(1, nombre);
+            ResultSet rs = ps.executeQuery();
+            if (rs.next()) return rs.getInt("id");
+        } catch (SQLException e) { e.printStackTrace(); }
+        return -1;
+    }
 }
