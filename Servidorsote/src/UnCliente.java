@@ -27,18 +27,16 @@ private final Socket socket;
     }
     @Override
     public void run() {
-            try {
-                enviarMensajeObject(Protocolo.bienvenida(idCliente));
-
-                cicloPrincipal();
-
-            } catch (IOException e) {
-                System.out.println("Cliente " + idCliente + " desconectado.");
-            } catch (Exception ex) {
-                Logger.getLogger(UnCliente.class.getName()).log(Level.SEVERE, null, ex);
-            } finally {
-                limpiarConexion();
-            }
+        try {
+            enviarMensajeObject(Protocolo.bienvenida(idCliente));
+            cicloPrincipal();
+        } catch (IOException e) {
+            System.out.println("Cliente " + idCliente + " (" + nombreUsuarioAutenticado + ") desconectado.");
+        } catch (Exception ex) {
+            Logger.getLogger(UnCliente.class.getName()).log(Level.SEVERE, null, ex);
+        } finally {
+            limpiarConexion();
+        }
     }
     
     private void cicloPrincipal() throws IOException {
