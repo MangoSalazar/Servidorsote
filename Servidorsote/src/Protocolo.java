@@ -62,7 +62,7 @@ public class Protocolo {
         return new Mensaje(
             Mensaje.Tipo.sistema, 
             EMISOR_SISTEMA, 
-            "Bienvenido cliente: " + idCliente + ". Usa 'login' o 'register'."
+            "Bienvenido cliente: " + idCliente + ". Usa 'login' o 'register'. 1. login <usuario> <contraseña>    -> Iniciar sesión" + "2. register <usuario> <contraseña> -> Crear cuenta nueva" + "3. <escribir mensaje>              -> Chat Global (Tienes %d mensajes de prueba)"
         );
     }
     public static Mensaje notificacion(String texto) {
