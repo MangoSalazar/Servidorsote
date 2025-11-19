@@ -96,6 +96,25 @@ public class UsuarioDAO {
             return false;
         }
     }
+    public void registrarFinPartida(int idGanador, int idPerdedor) {
+        actualizarStat(idGanador, "victorias");
+        actualizarStat(idPerdedor, "derrotas");
+    }
+
+    private void actualizarStat(int idUsuario, String columna) {
+        String sqlInit = "INSERT OR IGNORE INTO estadisticas (id_usuario) VALUES (?)";
+        String sqlUpdate = "UPDATE estadisticas SET " + columna + " = " + columna + " + 1 WHERE id_usuario = ?";
+        try (Connection conn = ConexionBD.conectar()) {
+            try (PreparedStatement ps = conn.prepareStatement(sqlInit)) {
+                ps.setInt(1, idUsuario);
+                ps.executeUpdate();
+            }
+            try (PreparedStatement ps = conn.prepareStatement(sqlUpdate)) {
+                ps.setInt(1, idUsuario);
+                ps.executeUpdate();
+            }
+        } catch (SQLException e) { System.out.println("No se pudo conectar la base de datos");}
+    }
     public String obtenerStats(int idUsuario) {
         String sql = "SELECT victorias, derrotas FROM estadisticas WHERE id_usuario = ?";
         try (Connection conn = ConexionBD.conectar(); PreparedStatement ps = conn.prepareStatement(sql)) {
