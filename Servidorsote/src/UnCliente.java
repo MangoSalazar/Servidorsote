@@ -65,29 +65,34 @@ private final Socket socket;
             enviarMensajeObject(Protocolo.INFO_YA_AUTENTICADO);
             return;
         }
-        
         String[] partes = mensaje.split(" ");
         if (partes.length != 3) {
             enviarMensajeObject(Protocolo.ERR_FORMATO);
             return;
         }
-
         String comando = partes[0];
         String uNombre = partes[1];
         String uPass = partes[2];
-
         try {
             new Sesion(comando, uNombre, uPass);
             this.autenticado = true;
             this.nombreUsuarioAutenticado = uNombre;
             this.idUsuarioDB = usuarioDAO.obtenerIdPorNombre(uNombre);
-            
             enviarMensajeObject(Protocolo.INFO_LOGIN_EXITOSO);
             System.out.println("Usuario autenticado: " + uNombre + " (ID DB: " + idUsuarioDB + ")");
             cargarMensajesPendientes();
-
         } catch (Exception e) {
             enviarMensajeObject(Protocolo.errorGenerico(e.getMessage()));
+        }
+    }
+    private void cargarMensajesPendientes() throws IOException {
+        List<String> pendientes = GrupoManager.obtenerMensajesPendientes(this.idUsuarioDB);
+        if (!pendientes.isEmpty()) {
+            enviarMensajeObject(Protocolo.notificacion("--- Tienes " + pendientes.size() + " mensajes pendientes de tus grupos ---"));
+            for (String msg : pendientes) {
+                enviarMensajeObject(Protocolo.notificacion(msg));
+            }
+            enviarMensajeObject(Protocolo.notificacion("--- Fin de mensajes pendientes ---"));
         }
     }
     private void enrutarMensaje(String rawMensaje) throws IOException {
@@ -225,5 +230,9 @@ private final Socket socket;
             Servidorsote.clientes.remove(idCliente);
             socket.close();
         } catch (IOException ignored) {}
+    }
+    
+    public int getIdUsuarioDB() {
+        return this.idUsuarioDB;
     }
 }
